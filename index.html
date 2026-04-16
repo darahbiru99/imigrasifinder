@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ImigrasiFinder — Detektor Situs Palsu</title>
+  <meta name="description" content="Lindungi dirimu dari situs imigrasi palsu. ImigrasiFinder membantu kamu mendeteksi website scam yang menyamar sebagai layanan imigrasi resmi Indonesia." />
+  <meta name="keywords" content="imigrasi palsu, situs scam, imigrasi go id, detektor situs palsu, paspor online palsu" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    // Tailwind custom config
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              red: '#DC2626',
+              darkred: '#B91C1C',
+              lightred: '#FEE2E2',
+            },
+          },
+          animation: {
+            'fade-slide-up': 'fadeSlideUp 0.4s ease forwards',
+            'pulse-slow': 'pulse 2.5s cubic-bezier(0.4,0,0.6,1) infinite',
+            'spin-slow': 'spin 1.5s linear infinite',
+          },
+          keyframes: {
+            fadeSlideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Base styles */
+    * { box-sizing: border-box; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
+    .dark ::-webkit-scrollbar-track { background: #1f2937; }
+
+    /* Hero gradient */
+    .hero-gradient {
+      background: linear-gradient(135deg, #fff 0%, #fff5f5 40%, #fee2e2 100%);
+    }
+    .dark .hero-gradient {
+      background: linear-gradient(135deg, #111827 0%, #1a1a2e 40%, #1f0a0a 100%);
+    }
+
+    /* Card glass effect */
+    .glass-card {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dark .glass-card {
+      background: rgba(31,41,55,0.85);
+    }
+
+    /* Risk bar animation */
+    .risk-bar-fill {
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Result card animation */
+    .result-card {
+      opacity: 0;
+      animation: fadeSlideUp 0.4s ease forwards;
+    }
+
+    /* Chip hover */
+    .chip:hover { transform: translateY(-2px); }
+
+    /* Input focus ring */
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+    }
+
+    /* Toast */
+    .toast {
+      transition: all 0.3s ease;
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    /* Loading dots */
+    .dot-bounce {
+      animation: dotBounce 1.4s infinite ease-in-out both;
+    }
+    .dot-bounce:nth-child(1) { animation-delay: -0.32s; }
+    .dot-bounce:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes dotBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Step card number circle */
+    .step-number {
+      background: linear-gradient(135deg, #DC2626, #ef4444);
+    }
+
+    /* Badge pulse */
+    .badge-scam { animation: badgePulse 2s infinite; }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+    }
+  </style>
+</head>
+
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 font-jakarta">
+
+  <!-- ===================== TOAST NOTIFICATION ===================== -->
+  <div id="toast" class="toast fixed top-5 right-5 z-50 bg-gray-800 dark:bg-gray-700 text-white text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs">
+    <span class="text-green-400">✓</span>
+    <span id="toastMsg">URL disalin!</span>
+  </div>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="sticky top-0 z-40 border-b border-red-100 dark:border-gray-700 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 dark:shadow-red-900">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-bold leading-tight text-gray-900 dark:text-white">ImigrasiFinder</h1>
+          <p class="text-[10px] leading-tight text-red-600 font-medium">Detektor Situs Palsu</p>
+        </div>
+      </div>
+
+      <!-- Right: Official link + Dark mode toggle -->
+      <div class="flex items-center gap-3">
+        <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer"
+           class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
+          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          imigrasi.go.id
+        </a>
+        <!-- Dark mode toggle -->
+        <button id="darkToggle" onclick="toggleDark()"
+          class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          title="Toggle dark mode" aria-label="Toggle dark mode">
+          <svg id="sunIcon" class="w-4 h-4 text-amber-500 hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+          </svg>
+          <svg id="moonIcon" class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== HERO / SEARCH SECTION ===================== -->
+  <section class="hero-gradient py-14 sm:py-20 border-b border-red-100 dark:border-gray-800">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full px-4 py-1.5 mb-6">
+        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+        <span class="text-xs font-semibold text-red-700 dark:text-red-400">Perlindungan Aktif</span>
+      </div>
+
+      <!-- Tagline -->
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-3">
+        Lindungi Dirimu dari<br/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">Situs Imigrasi Palsu</span>
+      </h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-2">
+        Deteksi situs scam yang menyamar sebagai layanan imigrasi resmi Indonesia.
+      </p>
+      <p class="inline-flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400 font-medium mb-8">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        Situs resmi imigrasi: <a href="https://imigrasi.go.id" target="_blank" class="underline hover:text-green-600">imigrasi.go.id</a>
+      </p>
+
+      <!-- Search Form -->
+      <div class="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-red-100 dark:shadow-red-900/20 border border-red-100 dark:border-gray-700 p-2 mb-4">
+        <div class="flex gap-2">
+          <div class="relative flex-1">
+            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input
+              id="searchInput"
+              type="text"
+              class="search-input w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-transparent focus:border-red-300 dark:focus:border-red-600 transition-all"
+              placeholder='Cari situs: "imigrasi", "paspor online", "visa indonesia"...'
+              autocomplete="off"
+              onkeydown="if(event.key==='Enter') doSearch()"
+            />
+          </div>
+          <button
+            onclick="doSearch()"
+            id="searchBtn"
+            class="flex-shrink-0 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold text-sm px-5 py-3 rounded-xl transition-all shadow-lg shadow-red-200 dark:shadow-red-900 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span class="hidden sm:inline">Cari Situs</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick chips -->
+      <div class="flex flex-wrap justify-center gap-2 mb-6">
+        <span class="text-xs text-gray-400 self-center mr-1">Cepat:</span>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('imigrasi indonesia')">imigrasi indonesia</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('layanan paspor')">layanan paspor</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('perpanjang paspor')">perpanjang paspor</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('visa indonesia murah')">visa indonesia murah</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('biaya imigrasi')">biaya imigrasi</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all"
+                onclick="setChip('calo paspor')">calo paspor</button>
+      </div>
+
+      <!-- Manual URL checker toggle -->
+      <button onclick="toggleManualChecker()"
+        class="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium underline underline-offset-2 transition-colors">
+        + Cek URL Manual (tempel URL langsung)
+      </button>
+
+      <!-- Manual URL checker panel -->
+      <div id="manualCheckerPanel" class="hidden mt-4 bg-white dark:bg-gray-800 border border-dashed border-red-300 dark:border-red-700 rounded-2xl p-4 text-left">
+        <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">🔍 Cek URL Manual</p>
+        <div class="flex gap-2">
+          <input
+            id="manualUrlInput"
+            type="url"
+            class="search-input flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-gray-200 dark:border-gray-600 transition-all"
+            placeholder="https://contoh-situs-imigrasi.com"
+            oninput="analyzeManualUrl()"
+            autocomplete="off"
+          />
+          <button onclick="clearManualUrl()"
+            class="px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl text-xs text-gray-600 dark:text-gray-300 transition-all">
+            Hapus
+          </button>
+        </div>
+        <div id="manualResult" class="mt-3 hidden"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS AREA ===================== -->
+  <section id="resultsSection" class="hidden max-w-4xl mx-auto px-4 py-10">
+
+    <!-- Loading state -->
+    <div id="loadingState" class="hidden flex-col items-center justify-center py-16 gap-4">
+      <div class="flex gap-2">
+        <div class="w-3 h-3 bg-red-500 rounded-full dot-bounce"></div>
+        <div class="w-3 h-3 bg-red-400 rounded-full dot-bounce"></div>
+        <div class="w-3 h-3 bg-red-300 rounded-full dot-bounce"></div>
+      </div>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Menganalisis situs...</p>
+    </div>
+
+    <!-- Results container -->
+    <div id="resultsContainer" class="hidden">
+      <!-- Search summary -->
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <p class="text-xs text-gray-400 dark:text-gray-500 mb-0.5">Hasil pencarian untuk</p>
+          <p class="font-bold text-gray-900 dark:text-white text-lg">"<span id="searchQueryLabel"></span>"</p>
+        </div>
+        <span id="resultCount" class="text-xs font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 px-3 py-1.5 rounded-full"></span>
+      </div>
+
+      <!-- Stats row -->
+      <div class="grid grid-cols-3 gap-3 mb-8">
+        <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4 text-center">
+          <div id="statAman" class="text-3xl font-extrabold text-green-600 dark:text-green-400">0</div>
+          <div class="text-xs font-medium text-green-700 dark:text-green-500 mt-1">✅ Total Aman</div>
+        </div>
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 text-center">
+          <div id="statWaspadai" class="text-3xl font-extrabold text-amber-600 dark:text-amber-400">0</div>
+          <div class="text-xs font-medium text-amber-700 dark:text-amber-500 mt-1">⚠️ Mencurigakan</div>
+        </div>
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4 text-center">
+          <div id="statScam" class="text-3xl font-extrabold text-red-600 dark:text-red-400">0</div>
+          <div class="text-xs font-medium text-red-700 dark:text-red-500 mt-1">❌ Potensi Scam</div>
+        </div>
+      </div>
+
+      <!-- Result cards -->
+      <div id="cardList" class="space-y-4"></div>
+
+      <!-- No results -->
+      <div id="noResults" class="hidden text-center py-16">
+        <div class="text-5xl mb-4">🔍</div>
+        <p class="text-gray-500 dark:text-gray-400 font-medium">Tidak ada hasil untuk kata kunci ini.</p>
+        <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Coba gunakan kata kunci lain seperti "imigrasi" atau "paspor".</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section id="howItWorksSection" class="max-w-4xl mx-auto px-4 py-14">
+    <div class="text-center mb-10">
+      <p class="text-xs font-bold text-red-500 uppercase tracking-widest mb-2">Cara Kerja</p>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">Tiga Langkah Sederhana</h2>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Verifikasi keamanan situs imigrasi dalam hitungan detik.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <!-- Step 1 -->
+      <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
+        <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">
+          1
+        </div>
+        <h3 class="font-bold text-gray-900 dark:text-white mb-2">Masukkan Kata Kunci</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          Ketik kata kunci seperti "imigrasi", "paspor online", atau "visa indonesia" di kolom pencarian untuk menemukan situs-situs terkait.
+        </p>
+        <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🔎</div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
+        <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">
+          2
+        </div>
+        <h3 class="font-bold text-gray-900 dark:text-white mb-2">AI Menganalisis</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          Sistem menghitung skor risiko 0–100 berdasarkan protokol HTTPS, domain .go.id, jenis hosting, serta kata kunci mencurigakan pada URL.
+        </p>
+        <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🤖</div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
+        <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">
+          3
+        </div>
+        <h3 class="font-bold text-gray-900 dark:text-white mb-2">Cek Hasilnya</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+          Lihat badge RESMI, MENCURIGAKAN, atau POTENSI SCAM. Gunakan tombol "Laporkan ke Kominfo" jika situs terbukti berbahaya.
+        </p>
+        <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🛡️</div>
+      </div>
+    </div>
+
+    <!-- Warning banner -->
+    <div class="mt-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex items-start gap-3">
+      <span class="text-amber-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
+      <div>
+        <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">Tips Keamanan</p>
+        <p class="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
+          Situs resmi imigrasi Indonesia <strong>hanya</strong> menggunakan domain <code class="bg-amber-100 dark:bg-amber-900 px-1 rounded">.go.id</code>. Jangan pernah membayar ke rekening pribadi. Selalu periksa URL sebelum memasukkan data pribadi.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <span class="font-bold text-gray-900 dark:text-white text-sm">ImigrasiFinder</span>
+        </div>
+        <div class="text-center text-xs text-gray-400 dark:text-gray-500 space-y-1">
+          <p>
+            Situs resmi: 
+            <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="text-green-600 dark:text-green-400 hover:underline font-medium">imigrasi.go.id</a>
+          </p>
+          <p>Aplikasi ini bukan alat resmi pemerintah. Hasil analisis bersifat indikatif.</p>
+        </div>
+        <p class="text-xs text-gray-400 dark:text-gray-500">
+          Powered by <span class="text-red-500 font-semibold">AI</span> ✨
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // ─────────────────────────────────────────────
+    // DARK MODE
+    // ─────────────────────────────────────────────
+    const htmlEl = document.documentElement;
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    // Initialize dark mode from localStorage
+    if (localStorage.getItem('imigrasi-dark') === 'true') {
+      htmlEl.classList.add('dark');
+      sunIcon.classList.remove('hidden');
+      moonIcon.classList.add('hidden');
+    }
+
+    function toggleDark() {
+      const isDark = htmlEl.classList.toggle('dark');
+      localStorage.setItem('imigrasi-dark', isDark);
+      sunIcon.classList.toggle('hidden', !isDark);
+      moonIcon.classList.toggle('hidden', isDark);
+    }
+
+    // ─────────────────────────────────────────────
+    // MOCK DATA
+    // ─────────────────────────────────────────────
+    const mockSites = [
+      {
+        url: "https://imigrasi.go.id",
+        score: 0,
+        description: "Situs resmi Direktorat Jenderal Imigrasi Indonesia."
+      },
+      {
+        url: "https://imigrasi-online.com",
+        score: 55,
+        description: "Domain .com dengan nama mirip resmi, perlu diwaspadai."
+      },
+      {
+        url: "http://layanan-imigrasi.blogspot.com",
+        score: 100,
+        description: "HTTP + blogspot gratis. Sangat mencurigakan, kemungkinan scam."
+      },
+      {
+        url: "https://paspor-cepat.net",
+        score: 70,
+        description: "Menawarkan paspor cepat dengan biaya tidak resmi."
+      },
+      {
+        url: "http://imigrasi-indonesia.xyz",
+        score: 100,
+        description: "HTTP + domain .xyz mencurigakan. Hindari situs ini."
+      },
+      {
+        url: "https://imigrasi.jakarta.go.id",
+        score: 5,
+        description: "Subdomain resmi pemerintah Jakarta, aman digunakan."
+      },
+      {
+        url: "https://visaindonesia-murah.wordpress.com",
+        score: 95,
+        description: "WordPress gratis dengan tawaran visa murah. Potensi penipuan."
+      },
+      {
+        url: "https://online-paspor.id",
+        score: 60,
+        description: "Domain .id tapi bukan .go.id, tidak terverifikasi resmi."
+      }
+    ];
+
+    // ─────────────────────────────────────────────
+    // RISK SCORING ENGINE
+    // ─────────────────────────────────────────────
+    /**
+     * Calculate risk score 0–100 for a given URL
+     * @param {string} url 
+     * @returns {number}
+     */
+    function calculateRiskScore(url) {
+      let score = 0;
+      const lower = url.toLowerCase();
+
+      // +40 → does NOT use HTTPS
+      if (!lower.startsWith('https://')) score += 40;
+
+      // Extract domain
+      let domain = lower.replace(/^https?:\/\//, '').split('/')[0];
+
+      // +30 → domain does NOT end with .go.id
+      if (!domain.endsWith('.go.id')) score += 30;
+
+      // +15 → URL contains imigrasi/paspor/visa but domain is not .go.id
+      const imigKeywords = ['imigrasi', 'paspor', 'visa'];
+      if (!domain.endsWith('.go.id') && imigKeywords.some(kw => lower.includes(kw))) score += 15;
+
+      // +15 → free hosting
+      const freeHosting = ['blogspot', 'wordpress', 'wix', 'weebly', 'web.id'];
+      if (freeHosting.some(h => domain.includes(h))) score += 15;
+
+      // +10 → suspicious TLDs
+      const suspTlds = ['.xyz', '.top', '.click', '.online', '.site'];
+      if (suspTlds.some(tld => domain.endsWith(tld))) score += 10;
+
+      return Math.min(score, 100);
+    }
+
+    /**
+     * Build checklist items for a URL
+     * @param {string} url 
+     * @returns {object}
+     */
+    function buildChecklist(url) {
+      const lower = url.toLowerCase();
+      let domain = lower.replace(/^https?:\/\//, '').split('/')[0];
+      const freeHosting = ['blogspot', 'wordpress', 'wix', 'weebly', 'web.id'];
+      const suspKeywords = ['rekening', 'transfer', 'bayar', 'pembayaran', 'murah','biaya', 'cepat'];
+
+      return {
+        https: lower.startsWith('https://'),
+        govDomain: domain.endsWith('.go.id'),
+        notFreeHosting: !freeHosting.some(h => domain.includes(h)),
+        notAskingPayment: !suspKeywords.some(kw => lower.includes(kw)),
+      };
+    }
+
+    /**
+     * Determine badge based on score and domain
+     * @param {number} score 
+     * @param {string} url 
+     * @returns {{label: string, color: string, emoji: string}}
+     */
+    function getBadge(score, url) {
+      const domain = url.toLowerCase().replace(/^https?:\/\//, '').split('/')[0];
+      if (domain.endsWith('.go.id')) {
+        return { label: 'RESMI', color: 'green', emoji: '✅' };
+      } else if (score > 60) {
+        return { label: 'POTENSI SCAM', color: 'red', emoji: '❌' };
+      } else {
+        return { label: 'MENCURIGAKAN', color: 'amber', emoji: '⚠️' };
+      }
+    }
+
+    /**
+     * Determine risk level label from score
+     */
+    function getRiskLevel(score) {
+      if (score <= 30) return { label: 'Aman', color: 'green', barColor: 'bg-green-500' };
+      if (score <= 60) return { label: 'Waspadai', color: 'amber', barColor: 'bg-amber-500' };
+      return { label: 'Hindari', color: 'red', barColor: 'bg-red-500' };
+    }
+
+    // ─────────────────────────────────────────────
+    // SEARCH FUNCTION
+    // ─────────────────────────────────────────────
+    function doSearch() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!query) return;
+
+      const resultsSection = document.getElementById('resultsSection');
+      const loadingState = document.getElementById('loadingState');
+      const resultsContainer = document.getElementById('resultsContainer');
+
+      // Show results section with loading state
+      resultsSection.classList.remove('hidden');
+      loadingState.classList.remove('hidden');
+      loadingState.classList.add('flex');
+      resultsContainer.classList.add('hidden');
+
+      // Smooth scroll to results
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Simulate 0.8s loading delay
+      setTimeout(() => {
+        loadingState.classList.add('hidden');
+        loadingState.classList.remove('flex');
+        resultsContainer.classList.remove('hidden');
+
+        // Filter mock data
+        const results = mockSites.filter(site =>
+          site.url.toLowerCase().includes(query) ||
+          site.description.toLowerCase().includes(query)
+        );
+
+        renderResults(results, query);
+      }, 800);
+    }
+
+    // ─────────────────────────────────────────────
+    // RENDER RESULTS
+    // ─────────────────────────────────────────────
+    function renderResults(results, query) {
+      document.getElementById('searchQueryLabel').textContent = query;
+      const cardList = document.getElementById('cardList');
+      const noResults = document.getElementById('noResults');
+
+      // Count stats
+      let aman = 0, waspadai = 0, scam = 0;
+      results.forEach(site => {
+        if (site.score <= 30) aman++;
+        else if (site.score <= 60) waspadai++;
+        else scam++;
+      });
+
+      document.getElementById('statAman').textContent = aman;
+      document.getElementById('statWaspadai').textContent = waspadai;
+      document.getElementById('statScam').textContent = scam;
+      document.getElementById('resultCount').textContent = `${results.length} situs ditemukan`;
+
+      cardList.innerHTML = '';
+
+      if (results.length === 0) {
+        noResults.classList.remove('hidden');
+        return;
+      }
+      noResults.classList.add('hidden');
+
+      results.forEach((site, idx) => {
+        const card = buildCard(site, idx);
+        cardList.appendChild(card);
+
+        // Trigger animation with staggered delay
+        setTimeout(() => {
+          card.style.animationDelay = `${idx * 80}ms`;
+          card.classList.add('result-card');
+        }, 10);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // BUILD RESULT CARD
+    // ─────────────────────────────────────────────
+    function buildCard(site, idx) {
+      const badge = getBadge(site.score, site.url);
+      const risk = getRiskLevel(site.score);
+      const checklist = buildChecklist(site.url);
+
+      // Badge color classes
+      const badgeClasses = {
+        green: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
+        amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+        red: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
+      };
+
+      // Risk label color
+      const riskLabelClasses = {
+        green: 'text-green-600 dark:text-green-400',
+        amber: 'text-amber-600 dark:text-amber-400',
+        red: 'text-red-600 dark:text-red-400',
+      };
+
+      // Card border accent
+      const cardAccent = {
+        green: 'border-l-green-400',
+        amber: 'border-l-amber-400',
+        red: 'border-l-red-500',
+      };
+
+      const domain = site.url.replace(/^https?:\/\//, '').split('/')[0];
+      const isScam = site.score > 30;
+
+      const card = document.createElement('div');
+      card.className = `glass-card border border-gray-100 dark:border-gray-700 border-l-4 ${cardAccent[badge.color]} rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow`;
+      card.style.opacity = '0';
+
+      card.innerHTML = `
+        <!-- Card Header -->
+        <div class="flex items-start justify-between gap-3 mb-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap mb-1">
+              <span class="text-base font-bold text-gray-900 dark:text-white truncate">${domain}</span>
+              <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${badgeClasses[badge.color]} ${badge.color === 'red' ? 'badge-scam' : ''}">
+                ${badge.emoji} ${badge.label}
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400 break-all">${site.url}</p>
+          </div>
+          <div class="flex-shrink-0 text-right">
+            <div class="text-2xl font-extrabold ${riskLabelClasses[risk.color]}">${site.score}</div>
+            <div class="text-[10px] font-medium text-gray-400 uppercase">Skor</div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">${site.description}</p>
+
+        <!-- Risk Bar -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Tingkat Risiko</span>
+            <span class="text-xs font-bold ${riskLabelClasses[risk.color]}">${risk.label}</span>
+          </div>
+          <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div class="h-full ${risk.barColor} risk-bar-fill rounded-full" style="width: 0%"
+                 data-width="${site.score}%"></div>
+          </div>
+        </div>
+
+        <!-- Checklist -->
+        <div class="grid grid-cols-2 gap-1.5 mb-4">
+          ${buildChecklistItem(checklist.https, 'Menggunakan HTTPS')}
+          ${buildChecklistItem(checklist.govDomain, 'Domain resmi .go.id')}
+          ${buildChecklistItem(checklist.notFreeHosting, 'Bukan domain gratis')}
+          ${buildChecklistItem(checklist.notAskingPayment, 'Tidak minta pembayaran')}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-2">
+          <button
+            onclick="copyUrl('${site.url}', this)"
+            class="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-xl transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+            </svg>
+            Salin URL
+          </button>
+          ${isScam ? `
+          <a href="https://aduankonten.id" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 text-xs font-medium bg-red-50 dark:bg-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 px-3 py-2 rounded-xl transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            Laporkan ke Kominfo
+          </a>` : ''}
+        </div>
+      `;
+
+      // Animate risk bar after card renders
+      setTimeout(() => {
+        const bar = card.querySelector('.risk-bar-fill');
+        if (bar) bar.style.width = bar.dataset.width;
+      }, 200 + idx * 80);
+
+      return card;
+    }
+
+    /**
+     * Build a single checklist item
+     */
+    function buildChecklistItem(passed, label) {
+      if (passed) {
+        return `<div class="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          <span>${label}</span>
+        </div>`;
+      } else {
+        return `<div class="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-9.293a1 1 0 00-1.414-1.414L10 8.586 6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293z" clip-rule="evenodd"/>
+          </svg>
+          <span>${label}</span>
+        </div>`;
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // CHIP CLICK
+    // ─────────────────────────────────────────────
+    function setChip(keyword) {
+      document.getElementById('searchInput').value = keyword;
+      doSearch();
+    }
+
+    // ─────────────────────────────────────────────
+    // MANUAL URL CHECKER
+    // ─────────────────────────────────────────────
+    function toggleManualChecker() {
+      const panel = document.getElementById('manualCheckerPanel');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        document.getElementById('manualUrlInput').focus();
+      }
+    }
+
+    function clearManualUrl() {
+      document.getElementById('manualUrlInput').value = '';
+      document.getElementById('manualResult').innerHTML = '';
+      document.getElementById('manualResult').classList.add('hidden');
+    }
+
+    function analyzeManualUrl() {
+      const input = document.getElementById('manualUrlInput').value.trim();
+      const resultEl = document.getElementById('manualResult');
+
+      if (!input || input.length < 5) {
+        resultEl.classList.add('hidden');
+        return;
+      }
+
+      // Basic URL normalization
+      let url = input;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+
+      const score = calculateRiskScore(url);
+      const badge = getBadge(score, url);
+      const risk = getRiskLevel(score);
+      const checklist = buildChecklist(url);
+      const isScam = score > 30;
+
+      const badgeClasses = {
+        green: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
+        amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+        red: 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
+      };
+      const riskLabelClasses = {
+        green: 'text-green-600 dark:text-green-400',
+        amber: 'text-amber-600 dark:text-amber-400',
+        red: 'text-red-600 dark:text-red-400',
+      };
+
+      resultEl.classList.remove('hidden');
+      resultEl.innerHTML = `
+        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${badgeClasses[badge.color]}">
+              ${badge.emoji} ${badge.label}
+            </span>
+            <span class="text-xl font-extrabold ${riskLabelClasses[risk.color]}">${score} <span class="text-xs font-medium">/ 100</span></span>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs text-gray-500 dark:text-gray-400">Skor Risiko</span>
+              <span class="text-xs font-bold ${riskLabelClasses[risk.color]}">${risk.label}</span>
+            </div>
+            <div class="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+              <div class="h-full ${risk.barColor} rounded-full risk-bar-fill" style="width: 0%" data-width="${score}%"></div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-1">
+            ${buildChecklistItem(checklist.https, 'Menggunakan HTTPS')}
+            ${buildChecklistItem(checklist.govDomain, 'Domain resmi .go.id')}
+            ${buildChecklistItem(checklist.notFreeHosting, 'Bukan domain gratis')}
+            ${buildChecklistItem(checklist.notAskingPayment, 'Tidak minta pembayaran')}
+          </div>
+          ${isScam ? `
+          <a href="https://aduankonten.id" target="_blank" rel="noopener noreferrer"
+            class="flex items-center justify-center gap-1.5 text-xs font-medium bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl transition-all w-full">
+            ⚠️ Laporkan ke Kominfo
+          </a>` : ''}
+        </div>
+      `;
+
+      // Animate bar
+      setTimeout(() => {
+        const bar = resultEl.querySelector('.risk-bar-fill');
+        if (bar) bar.style.width = bar.dataset.width;
+      }, 100);
+    }
+
+    // ─────────────────────────────────────────────
+    // COPY URL
+    // ─────────────────────────────────────────────
+    function copyUrl(url, btn) {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('URL disalin!');
+        // Brief button feedback
+        const original = btn.innerHTML;
+        btn.innerHTML = '✓ Disalin';
+        btn.classList.add('bg-green-100', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-400');
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.classList.remove('bg-green-100', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-400');
+        }, 1500);
+      }).catch(() => {
+        showToast('Gagal menyalin URL', true);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // TOAST
+    // ─────────────────────────────────────────────
+    let toastTimer = null;
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const icon = toast.querySelector('span:first-child');
+
+      toastMsg.textContent = message;
+      icon.textContent = isError ? '✗' : '✓';
+      icon.className = isError ? 'text-red-400' : 'text-green-400';
+
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+  </script>
+</body>
+</html>
