@@ -4,344 +4,226 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ImigrasiFinder — Detektor Situs Palsu</title>
-  <meta name="description" content="Lindungi dirimu dari situs imigrasi palsu. ImigrasiFinder membantu mendeteksi website scam yang menyamar sebagai layanan imigrasi resmi Indonesia." />
-  <meta name="keywords" content="imigrasi palsu, situs scam, imigrasi go id, detektor situs palsu, paspor online palsu, kantor imigrasi palsu" />
-
-  <!-- Google Fonts -->
+  <meta name="description" content="Lindungi dirimu dari situs imigrasi palsu. Database 200+ domain resmi vs domain palsu imigrasi Indonesia." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
-
-  <!-- Tailwind CSS CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { jakarta: ['"Plus Jakarta Sans"', 'sans-serif'] },
-        },
-      },
-    };
-  </script>
-
+  <script>tailwind.config = { darkMode: 'class' };</script>
   <style>
     * { box-sizing: border-box; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f1f1; }
     ::-webkit-scrollbar-thumb { background: #DC2626; border-radius: 4px; }
     .dark ::-webkit-scrollbar-track { background: #1f2937; }
-
-    /* Hero gradient */
-    .hero-gradient { background: linear-gradient(135deg, #fff 0%, #fff5f5 40%, #fee2e2 100%); }
-    .dark .hero-gradient { background: linear-gradient(135deg, #111827 0%, #1a1a2e 40%, #1f0808 100%); }
-
-    /* Glass card */
-    .glass-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); }
-    .dark .glass-card { background: rgba(31,41,55,0.88); }
-
-    /* Risk bar */
-    .risk-bar-fill { transition: width 1.1s cubic-bezier(0.4, 0, 0.2, 1); }
-
-    /* Card animation */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .hero-gradient { background: linear-gradient(135deg,#fff 0%,#fff5f5 50%,#fee2e2 100%); }
+    .dark .hero-gradient { background: linear-gradient(135deg,#111827 0%,#1a1020 50%,#1f0808 100%); }
+    .glass-card { background: rgba(255,255,255,0.93); backdrop-filter: blur(10px); }
+    .dark .glass-card { background: rgba(31,41,55,0.9); }
+    .risk-bar-fill { transition: width 1.1s cubic-bezier(0.4,0,0.2,1); }
+    @keyframes fadeSlideUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
     .result-card { animation: fadeSlideUp 0.4s ease forwards; }
-
-    /* Chip */
-    .chip { transition: all 0.15s ease; }
     .chip:hover { transform: translateY(-2px); }
-
-    /* Focus ring */
-    .search-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.22); }
-
-    /* Toast */
-    .toast { transition: all 0.3s ease; transform: translateX(110%); opacity: 0; }
-    .toast.show { transform: translateX(0); opacity: 1; }
-
-    /* Loading dots */
+    .search-input:focus { outline:none; box-shadow:0 0 0 3px rgba(220,38,38,0.22); }
+    .toast { transition:all 0.3s ease; transform:translateX(110%); opacity:0; }
+    .toast.show { transform:translateX(0); opacity:1; }
     .dot-bounce { animation: dotBounce 1.4s infinite ease-in-out both; }
-    .dot-bounce:nth-child(1) { animation-delay: -0.32s; }
-    .dot-bounce:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes dotBounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
-    }
-
-    /* Step number */
-    .step-number { background: linear-gradient(135deg, #DC2626, #ef4444); }
-
-    /* Badge scam pulse */
+    .dot-bounce:nth-child(1){animation-delay:-0.32s}.dot-bounce:nth-child(2){animation-delay:-0.16s}
+    @keyframes dotBounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+    .step-number { background: linear-gradient(135deg,#DC2626,#ef4444); }
     .badge-scam { animation: badgePulse 2s infinite; }
-    @keyframes badgePulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
-      50% { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
-    }
-
-    /* Modal */
+    @keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.4)}50%{box-shadow:0 0 0 6px rgba(220,38,38,0)}}
     .modal-backdrop { background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); }
     .modal-content { animation: fadeSlideUp 0.3s ease forwards; }
-
-    /* URL link hover */
-    .url-link:hover { text-decoration: underline; }
-
-    /* Highlight searched text */
-    mark { background: #fef08a; border-radius: 3px; padding: 0 2px; color: inherit; }
-    .dark mark { background: #713f12; }
+    mark { background:#fef08a; border-radius:3px; padding:0 2px; color:inherit; }
+    .dark mark { background:#713f12; }
+    /* Tab styles */
+    .tab-btn { transition: all 0.2s ease; }
+    .tab-btn.active { border-bottom: 2px solid #DC2626; color: #DC2626; }
+    .dark .tab-btn.active { color: #f87171; border-color: #f87171; }
+    /* Status badge for connectivity */
+    .status-online { }
+    .status-offline { }
+    .status-checking { animation: pulse 1.5s infinite; }
+    /* Comparison table */
+    .compare-row:hover td { background: rgba(220,38,38,0.04); }
+    .dark .compare-row:hover td { background: rgba(239,68,68,0.08); }
   </style>
 </head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 font-jakarta">
+<!-- ===================== TOAST ===================== -->
+<div id="toast" class="toast fixed top-5 right-5 z-[100] bg-gray-800 dark:bg-gray-700 text-white text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs">
+  <span id="toastIcon" class="text-green-400 flex-shrink-0">✓</span>
+  <span id="toastMsg">URL disalin!</span>
+</div>
 
-  <!-- ===================== TOAST ===================== -->
-  <div id="toast" class="toast fixed top-5 right-5 z-[100] bg-gray-800 dark:bg-gray-700 text-white text-sm px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs">
-    <span id="toastIcon" class="text-green-400 flex-shrink-0">✓</span>
-    <span id="toastMsg">URL disalin!</span>
-  </div>
-
-  <!-- ===================== REPORT MODAL ===================== -->
-  <div id="reportModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="modal-backdrop absolute inset-0" onclick="closeReportModal()"></div>
-    <div class="modal-content relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-      <!-- Modal Header -->
-      <div class="bg-red-600 px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-          </svg>
-          <h3 class="text-white font-bold text-base">Laporkan Situs Mencurigakan</h3>
-        </div>
-        <button onclick="closeReportModal()" class="text-white/70 hover:text-white transition-colors text-xl leading-none">&times;</button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-        <!-- URL yang dilaporkan -->
-        <div>
-          <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">URL yang Dilaporkan</label>
-          <div class="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-3 py-2.5">
-            <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/>
-            </svg>
-            <span id="reportUrlDisplay" class="text-xs font-mono text-red-700 dark:text-red-400 break-all"></span>
-          </div>
-        </div>
-
-        <!-- Status skor -->
-        <div id="reportScoreDisplay" class="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5 flex items-center justify-between">
-          <span class="text-xs text-gray-500 dark:text-gray-400">Skor Risiko Terdeteksi</span>
-          <span id="reportScoreVal" class="font-bold text-red-600 dark:text-red-400 text-sm"></span>
-        </div>
-
-        <!-- Alasan pelaporan -->
-        <div>
-          <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Alasan Pelaporan <span class="text-red-500">*</span></label>
-          <div class="grid grid-cols-1 gap-2" id="reportReasonGroup">
-            <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <input type="radio" name="reportReason" value="penipuan_paspor" class="accent-red-600"/> 
-              <span class="text-sm text-gray-700 dark:text-gray-300">Penipuan layanan paspor/visa</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <input type="radio" name="reportReason" value="domain_palsu" class="accent-red-600"/> 
-              <span class="text-sm text-gray-700 dark:text-gray-300">Domain menyamar sebagai situs resmi</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <input type="radio" name="reportReason" value="minta_bayar" class="accent-red-600"/> 
-              <span class="text-sm text-gray-700 dark:text-gray-300">Meminta pembayaran ke rekening pribadi</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <input type="radio" name="reportReason" value="phishing" class="accent-red-600"/> 
-              <span class="text-sm text-gray-700 dark:text-gray-300">Phishing / pencurian data pribadi</span>
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <input type="radio" name="reportReason" value="lainnya" class="accent-red-600"/> 
-              <span class="text-sm text-gray-700 dark:text-gray-300">Alasan lainnya</span>
-            </label>
-          </div>
-        </div>
-
-        <!-- Keterangan tambahan -->
-        <div>
-          <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Keterangan Tambahan</label>
-          <textarea id="reportNote" rows="3"
-            class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:outline-none focus:border-red-400 dark:focus:border-red-500 transition-all"
-            placeholder="Ceritakan pengalaman atau temuan kamu tentang situs ini..."></textarea>
-        </div>
-
-        <!-- Nama pelapor (opsional) -->
-        <div>
-          <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nama Pelapor <span class="text-gray-400 font-normal normal-case">(opsional)</span></label>
-          <input id="reportName" type="text"
-            class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-red-400 dark:focus:border-red-500 transition-all"
-            placeholder="Nama kamu" />
-        </div>
-
-        <!-- Info disclaimer -->
-        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 flex items-start gap-2">
-          <span class="text-blue-500 flex-shrink-0 mt-0.5">ℹ️</span>
-          <p class="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-            Setelah menekan <strong>"Laporkan ke Komdigi"</strong>, kamu akan diarahkan ke portal resmi <strong>aduankonten.id</strong> milik Kementerian Komunikasi dan Digital untuk melanjutkan pelaporan resmi.
-          </p>
-        </div>
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="border-t border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between gap-3 bg-gray-50 dark:bg-gray-800/50">
-        <button onclick="closeReportModal()"
-          class="px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-all">
-          Batal
-        </button>
-        <div class="flex items-center gap-2">
-          <button onclick="copyReportUrl()"
-            class="px-4 py-2.5 text-sm font-medium bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all flex items-center gap-1.5">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Salin URL
-          </button>
-          <button onclick="submitReport()"
-            class="px-5 py-2.5 text-sm font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-red-200 dark:shadow-red-900">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            Laporkan ke Komdigi
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== HEADER ===================== -->
-  <header class="sticky top-0 z-40 border-b border-red-100 dark:border-gray-700 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 dark:shadow-red-900/50">
-          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
-          </svg>
-        </div>
-        <div>
-          <h1 class="text-base font-bold leading-tight text-gray-900 dark:text-white">ImigrasiFinder</h1>
-          <p class="text-[10px] leading-tight text-red-600 font-medium">Detektor Situs Palsu</p>
-        </div>
-      </div>
-
+<!-- ===================== REPORT MODAL ===================== -->
+<div id="reportModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="modal-backdrop absolute inset-0" onclick="closeReportModal()"></div>
+  <div class="modal-content relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+    <div class="bg-red-600 px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer"
-           class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors">
-          <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-          imigrasi.go.id
-        </a>
-        <!-- Total DB badge -->
-        <div class="hidden sm:flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2.5 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
-          <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-          <span id="dbCount">0</span> situs terindeks
+        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+        <h3 class="text-white font-bold">Laporkan Situs Mencurigakan</h3>
+      </div>
+      <button onclick="closeReportModal()" class="text-white/70 hover:text-white text-2xl leading-none">&times;</button>
+    </div>
+    <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">URL yang Dilaporkan</label>
+        <div class="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-3 py-2.5">
+          <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd"/></svg>
+          <span id="reportUrlDisplay" class="text-xs font-mono text-red-700 dark:text-red-400 break-all"></span>
         </div>
-        <!-- Dark mode toggle -->
-        <button id="darkToggle" onclick="toggleDark()"
-          class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          title="Toggle dark mode" aria-label="Toggle dark mode">
-          <svg id="sunIcon" class="w-4 h-4 text-amber-500 hidden" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
-          </svg>
-          <svg id="moonIcon" class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-          </svg>
+      </div>
+      <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl px-3 py-2.5 flex items-center justify-between">
+        <span class="text-xs text-gray-500 dark:text-gray-400">Skor Risiko Terdeteksi</span>
+        <span id="reportScoreVal" class="font-bold text-red-600 dark:text-red-400 text-sm"></span>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Alasan Pelaporan <span class="text-red-500">*</span></label>
+        <div class="grid grid-cols-1 gap-2">
+          <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"><input type="radio" name="reportReason" value="penipuan_paspor" class="accent-red-600"/><span class="text-sm text-gray-700 dark:text-gray-300">Penipuan layanan paspor/visa</span></label>
+          <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"><input type="radio" name="reportReason" value="domain_palsu" class="accent-red-600"/><span class="text-sm text-gray-700 dark:text-gray-300">Domain menyamar sebagai situs resmi</span></label>
+          <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"><input type="radio" name="reportReason" value="minta_bayar" class="accent-red-600"/><span class="text-sm text-gray-700 dark:text-gray-300">Meminta pembayaran ke rekening pribadi</span></label>
+          <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"><input type="radio" name="reportReason" value="phishing" class="accent-red-600"/><span class="text-sm text-gray-700 dark:text-gray-300">Phishing / pencurian data pribadi</span></label>
+          <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"><input type="radio" name="reportReason" value="lainnya" class="accent-red-600"/><span class="text-sm text-gray-700 dark:text-gray-300">Alasan lainnya</span></label>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Keterangan Tambahan</label>
+        <textarea id="reportNote" rows="3" class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 resize-none focus:outline-none focus:border-red-400 transition-all" placeholder="Ceritakan temuan kamu tentang situs ini..."></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">Nama Pelapor <span class="text-gray-400 font-normal normal-case">(opsional)</span></label>
+        <input id="reportName" type="text" class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-red-400 transition-all" placeholder="Nama kamu"/>
+      </div>
+      <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3 flex items-start gap-2">
+        <span class="text-blue-500 flex-shrink-0 mt-0.5">ℹ️</span>
+        <p class="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">Kamu akan diarahkan ke portal resmi <strong>aduankonten.id</strong> milik Kementerian Komunikasi dan Digital (Komdigi) untuk melanjutkan pelaporan resmi.</p>
+      </div>
+    </div>
+    <div class="border-t border-gray-100 dark:border-gray-700 px-6 py-4 flex items-center justify-between gap-3 bg-gray-50 dark:bg-gray-800/50">
+      <button onclick="closeReportModal()" class="px-4 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-xl transition-all">Batal</button>
+      <div class="flex items-center gap-2">
+        <button onclick="copyReportUrl()" class="px-4 py-2.5 text-sm font-medium bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Salin URL
+        </button>
+        <button onclick="submitReport()" class="px-5 py-2.5 text-sm font-bold bg-red-600 hover:bg-red-700 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-red-200 dark:shadow-red-900">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          Laporkan ke Komdigi
         </button>
       </div>
     </div>
-  </header>
+  </div>
+</div>
 
-  <!-- ===================== HERO ===================== -->
-  <section class="hero-gradient py-14 sm:py-20 border-b border-red-100 dark:border-gray-800">
-    <div class="max-w-3xl mx-auto px-4 text-center">
-      <div class="inline-flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full px-4 py-1.5 mb-6">
-        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-        <span class="text-xs font-semibold text-red-700 dark:text-red-400">Perlindungan Aktif · 80+ Situs Terindeks</span>
+<!-- ===================== HEADER ===================== -->
+<header class="sticky top-0 z-40 border-b border-red-100 dark:border-gray-700 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-200 dark:shadow-red-900/50">
+        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/></svg>
       </div>
+      <div>
+        <h1 class="text-base font-bold leading-tight text-gray-900 dark:text-white">ImigrasiFinder</h1>
+        <p class="text-[10px] leading-tight text-red-600 font-medium">Detektor Situs Palsu</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full border border-green-200 dark:border-green-800 hover:bg-green-100 transition-colors">
+        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        imigrasi.go.id
+      </a>
+      <div class="hidden sm:flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2.5 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+        <span id="dbCount">0</span> situs
+      </div>
+      <button onclick="toggleDark()" class="w-9 h-9 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <svg id="sunIcon" class="w-4 h-4 text-amber-500 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/></svg>
+        <svg id="moonIcon" class="w-4 h-4 text-gray-600 dark:text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
+<!-- ===================== MAIN TAB NAV ===================== -->
+<div class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-[57px] z-30">
+  <div class="max-w-6xl mx-auto px-4 flex gap-0">
+    <button id="tab-search-btn" onclick="switchMainTab('search')" class="tab-btn active px-5 py-3 text-sm font-semibold text-gray-600 dark:text-gray-400 border-b-2 border-transparent -mb-px flex items-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      Detektor Situs
+    </button>
+    <button id="tab-resmi-btn" onclick="switchMainTab('resmi')" class="tab-btn px-5 py-3 text-sm font-semibold text-gray-600 dark:text-gray-400 border-b-2 border-transparent -mb-px flex items-center gap-1.5">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      Domain Resmi
+    </button>
+    <button id="tab-compare-btn" onclick="switchMainTab('compare')" class="tab-btn px-5 py-3 text-sm font-semibold text-gray-600 dark:text-gray-400 border-b-2 border-transparent -mb-px flex items-center gap-1.5">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Resmi vs Palsu
+    </button>
+  </div>
+</div>
+
+<!-- ===================== TAB: DETEKTOR SITUS ===================== -->
+<div id="tab-search" class="tab-content">
+  <!-- HERO -->
+  <section class="hero-gradient py-12 sm:py-16 border-b border-red-100 dark:border-gray-800">
+    <div class="max-w-3xl mx-auto px-4 text-center">
+      <div class="inline-flex items-center gap-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full px-4 py-1.5 mb-5">
+        <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+        <span class="text-xs font-semibold text-red-700 dark:text-red-400">Perlindungan Aktif · 200+ Domain Resmi Terindeks</span>
+      </div>
       <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight mb-3">
         Lindungi Dirimu dari<br/>
         <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-red-400">Situs Imigrasi Palsu</span>
       </h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-2">
-        Cari berdasarkan nama kota, layanan, atau langsung tempel URL untuk dicek.
+      <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base mb-2">Cari berdasarkan nama kota, layanan, atau langsung tempel URL untuk dicek.</p>
+      <p class="inline-flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400 font-medium mb-7">
+        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        Situs resmi: <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="underline hover:text-green-600">imigrasi.go.id</a>
       </p>
-      <p class="inline-flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400 font-medium mb-8">
-        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-        </svg>
-        Situs resmi imigrasi: <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="underline hover:text-green-600">imigrasi.go.id</a>
-      </p>
-
-      <!-- Search Form -->
       <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl shadow-red-100 dark:shadow-red-900/20 border border-red-100 dark:border-gray-700 p-2 mb-4">
         <div class="flex gap-2">
           <div class="relative flex-1">
             <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-              </svg>
+              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </div>
-            <input id="searchInput" type="text"
-              class="search-input w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-transparent focus:border-red-300 dark:focus:border-red-600 transition-all"
-              placeholder='Cari kota, layanan, atau URL: "tasikmalaya", "paspor bandung"...'
-              autocomplete="off"
-              onkeydown="if(event.key==='Enter') doSearch()" />
+            <input id="searchInput" type="text" class="search-input w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-transparent focus:border-red-300 dark:focus:border-red-600 transition-all" placeholder='Cari: "tasikmalaya", "paspor bandung", "visa jakarta"...' autocomplete="off" onkeydown="if(event.key==='Enter') doSearch()"/>
           </div>
-          <button onclick="doSearch()" id="searchBtn"
-            class="flex-shrink-0 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-semibold text-sm px-5 py-3 rounded-xl transition-all shadow-lg shadow-red-200 dark:shadow-red-900 flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
+          <button onclick="doSearch()" class="flex-shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-5 py-3 rounded-xl transition-all shadow-lg shadow-red-200 dark:shadow-red-900 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             <span class="hidden sm:inline">Cari Situs</span>
           </button>
         </div>
       </div>
-
-      <!-- Quick chips -->
-      <div class="flex flex-wrap justify-center gap-2 mb-5">
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
         <span class="text-xs text-gray-400 self-center mr-1">Cepat:</span>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('imigrasi')">imigrasi indonesia</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('tasikmalaya')">tasikmalaya</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('bandung')">bandung</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('paspor')">paspor online</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('visa murah')">visa murah</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('surabaya')">surabaya</button>
-        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 dark:hover:border-red-500 dark:hover:text-red-400 transition-all" onclick="setChip('calo paspor')">calo paspor</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('imigrasi')">imigrasi</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('tasikmalaya')">tasikmalaya</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('bandung')">bandung</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('paspor')">paspor</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('visa murah')">visa murah</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('surabaya')">surabaya</button>
+        <button class="chip text-xs bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1.5 rounded-full hover:border-red-400 hover:text-red-600 transition-all" onclick="setChip('calo paspor')">calo paspor</button>
       </div>
-
-      <!-- Manual URL Checker toggle -->
-      <button onclick="toggleManualChecker()"
-        class="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium underline underline-offset-2 transition-colors">
-        + Cek URL Manual (tempel URL langsung)
-      </button>
-
+      <button onclick="toggleManualChecker()" class="text-xs text-red-600 dark:text-red-400 hover:text-red-700 font-medium underline underline-offset-2 transition-colors">+ Cek URL Manual (tempel URL langsung)</button>
       <div id="manualCheckerPanel" class="hidden mt-4 bg-white dark:bg-gray-800 border border-dashed border-red-300 dark:border-red-700 rounded-2xl p-4 text-left">
         <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wide">🔍 Cek URL Manual</p>
         <div class="flex gap-2">
-          <input id="manualUrlInput" type="text"
-            class="search-input flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-gray-200 dark:border-gray-600 transition-all"
-            placeholder="https://contoh-situs-imigrasi.com"
-            oninput="analyzeManualUrl()" autocomplete="off" />
-          <button onclick="clearManualUrl()"
-            class="px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl text-xs text-gray-600 dark:text-gray-300 transition-all">Hapus</button>
+          <input id="manualUrlInput" type="text" class="search-input flex-1 px-3 py-2.5 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 border border-gray-200 dark:border-gray-600 transition-all" placeholder="https://contoh-situs-imigrasi.com" oninput="analyzeManualUrl()" autocomplete="off"/>
+          <button onclick="clearManualUrl()" class="px-3 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-xl text-xs text-gray-600 dark:text-gray-300 transition-all">Hapus</button>
         </div>
         <div id="manualResult" class="mt-3 hidden"></div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== RESULTS ===================== -->
+  <!-- RESULTS -->
   <section id="resultsSection" class="hidden max-w-4xl mx-auto px-4 py-10">
-    <!-- Loading -->
     <div id="loadingState" class="hidden flex-col items-center justify-center py-16 gap-4">
       <div class="flex gap-2">
         <div class="w-3 h-3 bg-red-500 rounded-full dot-bounce"></div>
@@ -350,8 +232,6 @@
       </div>
       <p class="text-sm text-gray-500 dark:text-gray-400">Menganalisis situs...</p>
     </div>
-
-    <!-- Results Container -->
     <div id="resultsContainer" class="hidden">
       <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
@@ -360,8 +240,6 @@
         </div>
         <span id="resultCount" class="text-xs font-medium bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 px-3 py-1.5 rounded-full"></span>
       </div>
-
-      <!-- Stats -->
       <div class="grid grid-cols-3 gap-3 mb-8">
         <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4 text-center">
           <div id="statAman" class="text-3xl font-extrabold text-green-600 dark:text-green-400">0</div>
@@ -376,661 +254,817 @@
           <div class="text-xs font-medium text-red-700 dark:text-red-500 mt-1">❌ Potensi Scam</div>
         </div>
       </div>
-
       <div id="cardList" class="space-y-4"></div>
-
       <div id="noResults" class="hidden text-center py-16">
         <div class="text-5xl mb-4">🔍</div>
         <p class="text-gray-500 dark:text-gray-400 font-medium">Tidak ada hasil untuk kata kunci ini.</p>
         <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">Coba kata kunci lain seperti nama kota, "imigrasi", atau "paspor".</p>
-        <button onclick="doSearch('imigrasi')" class="mt-4 text-xs text-red-600 dark:text-red-400 underline">Tampilkan semua situs imigrasi</button>
+        <button onclick="setChip('imigrasi')" class="mt-4 text-xs text-red-600 dark:text-red-400 underline">Tampilkan semua situs imigrasi</button>
       </div>
     </div>
   </section>
 
-  <!-- ===================== HOW IT WORKS ===================== -->
-  <section id="howItWorksSection" class="max-w-4xl mx-auto px-4 py-14">
-    <div class="text-center mb-10">
+  <!-- How it works -->
+  <section class="max-w-4xl mx-auto px-4 py-12">
+    <div class="text-center mb-8">
       <p class="text-xs font-bold text-red-500 uppercase tracking-widest mb-2">Cara Kerja</p>
       <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">Tiga Langkah Sederhana</h2>
-      <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Verifikasi keamanan situs imigrasi dalam hitungan detik.</p>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
       <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
         <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">1</div>
         <h3 class="font-bold text-gray-900 dark:text-white mb-2">Masukkan Kata Kunci</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Ketik nama kota, layanan, atau kata kunci seperti "tasikmalaya", "paspor bandung", "visa jakarta".</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Ketik nama kota, layanan, atau URL langsung. Sistem mencari di 200+ data situs terindeks.</p>
         <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🔎</div>
       </div>
       <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
         <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">2</div>
-        <h3 class="font-bold text-gray-900 dark:text-white mb-2">AI Menganalisis</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Sistem menghitung skor risiko berdasarkan HTTPS, domain .go.id, hosting gratis, dan TLD mencurigakan.</p>
+        <h3 class="font-bold text-gray-900 dark:text-white mb-2">AI Menganalisis + Cek Koneksi</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Sistem menghitung skor risiko dan mencoba mengakses URL — apakah situs bisa dijangkau atau tidak.</p>
         <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🤖</div>
       </div>
       <div class="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow group">
         <div class="step-number w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg mb-4 shadow-lg shadow-red-200 dark:shadow-red-900">3</div>
         <h3 class="font-bold text-gray-900 dark:text-white mb-2">Cek & Laporkan</h3>
-        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Lihat badge RESMI / MENCURIGAKAN / POTENSI SCAM. Klik "Laporkan" untuk melapor ke Komdigi secara resmi.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Lihat badge status. Klik URL untuk membuka. Laporkan situs berbahaya ke Komdigi dengan satu tombol.</p>
         <div class="absolute top-4 right-4 text-3xl opacity-10 group-hover:opacity-20 transition-opacity">🛡️</div>
       </div>
     </div>
-    <div class="mt-8 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex items-start gap-3">
+    <div class="mt-6 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex items-start gap-3">
       <span class="text-amber-500 text-xl flex-shrink-0 mt-0.5">⚠️</span>
-      <div>
-        <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">Tips Keamanan Penting</p>
-        <p class="text-xs text-amber-700 dark:text-amber-400 mt-1 leading-relaxed">
-          Situs resmi imigrasi Indonesia <strong>hanya</strong> menggunakan domain <code class="bg-amber-100 dark:bg-amber-900 px-1 rounded">.go.id</code>. 
-          Jangan pernah membayar ke rekening pribadi. Hindari situs yang tidak menggunakan HTTPS.
-        </p>
-      </div>
+      <p class="text-xs text-amber-700 dark:text-amber-400 leading-relaxed"><strong>Tips:</strong> Situs resmi imigrasi Indonesia <strong>hanya</strong> menggunakan domain <code class="bg-amber-100 dark:bg-amber-900 px-1 rounded">.go.id</code>. Jangan pernah membayar ke rekening pribadi.</p>
     </div>
   </section>
+</div>
 
-  <!-- ===================== FOOTER ===================== -->
-  <footer class="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50">
-    <div class="max-w-4xl mx-auto px-4 py-8">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-2">
-          <div class="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/>
-            </svg>
-          </div>
-          <span class="font-bold text-gray-900 dark:text-white text-sm">ImigrasiFinder</span>
-        </div>
-        <div class="text-center text-xs text-gray-400 dark:text-gray-500 space-y-1">
-          <p>Situs resmi: <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="text-green-600 dark:text-green-400 hover:underline font-medium">imigrasi.go.id</a></p>
-          <p>Aplikasi ini bukan alat resmi pemerintah. Hasil analisis bersifat indikatif.</p>
-        </div>
-        <p class="text-xs text-gray-400 dark:text-gray-500">Powered by <span class="text-red-500 font-semibold">AI</span> ✨</p>
+<!-- ===================== TAB: DOMAIN RESMI (PDF DATA) ===================== -->
+<div id="tab-resmi" class="tab-content hidden">
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div>
+        <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Domain Resmi Ditjen Imigrasi 2026</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Sumber: WEBSITE SATUAN KERJA DITJENIM 2026 — <span class="text-green-600 font-medium">219 Unit Satuan Kerja</span></p>
+      </div>
+      <div class="flex gap-2">
+        <input id="resmiSearchInput" type="text" oninput="filterResmiTable()" placeholder="Cari nama UPT atau domain..." class="search-input px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 transition-all w-64"/>
       </div>
     </div>
-  </footer>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="resmiTable">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700/60 border-b border-gray-200 dark:border-gray-600">
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide w-10">#</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Nama UPT / Satuan Kerja</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Domain Resmi</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide w-24">Status</th>
+            </tr>
+          </thead>
+          <tbody id="resmiTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mt-4 text-xs text-gray-400 dark:text-gray-500 text-center">
+      Semua domain resmi menggunakan format <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">[nama].imigrasi.go.id</code> · Status koneksi dicek secara real-time
+    </div>
+  </div>
+</div>
 
-  <!-- ===================== JAVASCRIPT ===================== -->
-  <script>
-    // ─────────────────────────────────────────────
-    // DARK MODE
-    // ─────────────────────────────────────────────
-    const htmlEl = document.documentElement;
-    const sunIcon = document.getElementById('sunIcon');
-    const moonIcon = document.getElementById('moonIcon');
+<!-- ===================== TAB: RESMI VS PALSU ===================== -->
+<div id="tab-compare" class="tab-content hidden">
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <div>
+        <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white">Perbandingan: Resmi vs Palsu</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Sandingkan domain resmi dengan domain mencurigakan berdasarkan kota/wilayah.</p>
+      </div>
+      <input id="compareSearchInput" type="text" oninput="filterCompareTable()" placeholder="Cari kota atau domain..." class="search-input px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 transition-all w-64"/>
+    </div>
 
-    if (localStorage.getItem('imigrasi-dark') === 'true') {
-      htmlEl.classList.add('dark');
-      sunIcon.classList.remove('hidden');
-      moonIcon.classList.add('hidden');
-    }
+    <!-- Legend -->
+    <div class="flex flex-wrap gap-3 mb-5">
+      <div class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400"><span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Domain Resmi (.go.id)</div>
+      <div class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400"><span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span> Mencurigakan (skor 31–60)</div>
+      <div class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Potensi Scam (skor >60)</div>
+      <div class="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400"><span class="w-3 h-3 rounded-full bg-gray-400 inline-block"></span> Tidak dapat diakses</div>
+    </div>
 
-    function toggleDark() {
-      const isDark = htmlEl.classList.toggle('dark');
-      localStorage.setItem('imigrasi-dark', isDark);
-      sunIcon.classList.toggle('hidden', !isDark);
-      moonIcon.classList.toggle('hidden', isDark);
-    }
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="compareTable">
+          <thead>
+            <tr class="bg-gray-50 dark:bg-gray-700/60 border-b border-gray-200 dark:border-gray-600">
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Wilayah / Kota</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wide">✅ Domain Resmi</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wide">⚠️ Domain Mencurigakan / Palsu</th>
+              <th class="text-left px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide w-20">Skor</th>
+              <th class="text-center px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide w-20">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="compareTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 text-xs text-red-700 dark:text-red-400">
+      <strong>⚠️ Perhatian:</strong> Jangan pernah mengakses layanan imigrasi melalui domain yang tidak berakhiran <code class="bg-red-100 dark:bg-red-900 px-1 rounded">.go.id</code>. Jika menemukan situs palsu, laporkan segera ke <a href="https://aduankonten.id" target="_blank" class="underline font-bold">aduankonten.id</a>.
+    </div>
+  </div>
+</div>
 
-    // ─────────────────────────────────────────────
-    // DATABASE SITUS (80+ entries)
-    // Setiap entry: { url, score, description, tags[] }
-    // tags: kata kunci tambahan untuk pencarian (kota, alias, layanan)
-    // ─────────────────────────────────────────────
-    const mockSites = [
-      // ── SITUS RESMI PUSAT ──
-      { url:"https://imigrasi.go.id", score:0, description:"Situs resmi Direktorat Jenderal Imigrasi Indonesia. Portal utama layanan imigrasi.", tags:["resmi","imigrasi","paspor","visa","pusat","ditjen","nasional"] },
-      { url:"https://visa-online.imigrasi.go.id", score:0, description:"Portal resmi permohonan visa online Ditjen Imigrasi.", tags:["visa","online","resmi","imigrasi","permohonan"] },
-      { url:"https://antrian.imigrasi.go.id", score:0, description:"Sistem antrian online resmi Ditjen Imigrasi untuk pembuatan paspor.", tags:["antrian","online","paspor","resmi","imigrasi","booking","jadwal"] },
-      { url:"https://evisa.imigrasi.go.id", score:0, description:"Portal e-Visa resmi Ditjen Imigrasi Indonesia.", tags:["evisa","e-visa","visa","online","resmi","imigrasi"] },
+<!-- ===================== FOOTER ===================== -->
+<footer class="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 mt-8">
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 1.944A11.954 11.954 0 012.166 5C2.056 5.649 2 6.319 2 7c0 5.225 3.34 9.67 8 11.317C14.66 16.67 18 12.225 18 7c0-.682-.057-1.35-.166-2.001A11.954 11.954 0 0110 1.944zM11 14a1 1 0 11-2 0 1 1 0 012 0zm0-7a1 1 0 10-2 0v3a1 1 0 102 0V7z" clip-rule="evenodd"/></svg></div>
+        <span class="font-bold text-gray-900 dark:text-white text-sm">ImigrasiFinder</span>
+      </div>
+      <div class="text-xs text-gray-400 dark:text-gray-500 space-y-0.5">
+        <p>Situs resmi: <a href="https://imigrasi.go.id" target="_blank" rel="noopener noreferrer" class="text-green-600 dark:text-green-400 hover:underline font-medium">imigrasi.go.id</a></p>
+        <p>Aplikasi ini bukan alat resmi pemerintah. Hasil analisis bersifat indikatif.</p>
+      </div>
+      <p class="text-xs text-gray-400 dark:text-gray-500">Powered by <span class="text-red-500 font-semibold">AI</span> ✨</p>
+    </div>
+  </div>
+</footer>
 
-      // ── KANTOR IMIGRASI RESMI DAERAH ──
-      // Jawa Barat
-      { url:"https://jakbar.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Non TPI Jakarta Barat — situs resmi pemerintah.", tags:["jakarta","jakbar","jakarta barat","imigrasi","resmi","paspor"] },
-      { url:"https://jaksel.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Jakarta Selatan — resmi.", tags:["jakarta","jaksel","jakarta selatan","imigrasi","resmi"] },
-      { url:"https://jaktim.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Non TPI Jakarta Timur — resmi.", tags:["jakarta","jaktim","jakarta timur","imigrasi","resmi"] },
-      { url:"https://jakut.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Jakarta Utara — resmi.", tags:["jakarta","jakut","jakarta utara","imigrasi","resmi"] },
-      { url:"https://bandung.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Bandung — situs resmi pemerintah.", tags:["bandung","jawa barat","jabar","imigrasi","resmi","paspor","bandung raya"] },
-      { url:"https://bogor.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Bogor — resmi.", tags:["bogor","jawa barat","imigrasi","resmi","paspor"] },
-      { url:"https://bekasi.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Non TPI Bekasi — resmi.", tags:["bekasi","jawa barat","imigrasi","resmi"] },
-      { url:"https://depok.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Depok — resmi.", tags:["depok","jawa barat","imigrasi","resmi"] },
-      { url:"https://cirebon.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Cirebon — resmi.", tags:["cirebon","jawa barat","imigrasi","resmi"] },
-      { url:"https://tasikmalaya.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Tasikmalaya — resmi, subdomain resmi pemerintah.", tags:["tasikmalaya","tasik","imigrasi","resmi","jawa barat","paspor tasikmalaya"] },
-      { url:"https://sukabumi.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Sukabumi — resmi.", tags:["sukabumi","jawa barat","imigrasi","resmi"] },
-      { url:"https://karawang.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Karawang — resmi.", tags:["karawang","jawa barat","imigrasi","resmi"] },
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+// ─── DARK MODE ───
+const htmlEl = document.documentElement;
+if (localStorage.getItem('imigrasi-dark') === 'true') { htmlEl.classList.add('dark'); document.getElementById('sunIcon').classList.remove('hidden'); document.getElementById('moonIcon').classList.add('hidden'); }
+function toggleDark() {
+  const d = htmlEl.classList.toggle('dark');
+  localStorage.setItem('imigrasi-dark', d);
+  document.getElementById('sunIcon').classList.toggle('hidden', !d);
+  document.getElementById('moonIcon').classList.toggle('hidden', d);
+}
 
-      // Jawa Tengah & DIY
-      { url:"https://semarang.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Semarang — resmi.", tags:["semarang","jawa tengah","imigrasi","resmi","paspor"] },
-      { url:"https://surakarta.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Surakarta (Solo) — resmi.", tags:["solo","surakarta","jawa tengah","imigrasi","resmi"] },
-      { url:"https://yogyakarta.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Yogyakarta — resmi.", tags:["jogja","yogyakarta","diy","imigrasi","resmi","paspor"] },
-      { url:"https://cilacap.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Cilacap — resmi.", tags:["cilacap","jawa tengah","imigrasi","resmi"] },
-      { url:"https://purwokerto.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Purwokerto — resmi.", tags:["purwokerto","banyumas","jawa tengah","imigrasi","resmi"] },
-      { url:"https://tegal.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Tegal — resmi.", tags:["tegal","jawa tengah","imigrasi","resmi"] },
-      { url:"https://pekalongan.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Pekalongan — resmi.", tags:["pekalongan","jawa tengah","imigrasi","resmi"] },
+// ─── MAIN TAB SWITCH ───
+function switchMainTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.remove('hidden');
+  document.getElementById('tab-' + name + '-btn').classList.add('active');
+  if (name === 'resmi') renderResmiTable();
+  if (name === 'compare') renderCompareTable();
+}
 
-      // Jawa Timur
-      { url:"https://surabaya.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Khusus TPI Surabaya — resmi.", tags:["surabaya","jawa timur","imigrasi","resmi","paspor","sby"] },
-      { url:"https://malang.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Malang — resmi.", tags:["malang","jawa timur","imigrasi","resmi","paspor"] },
-      { url:"https://kediri.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Kediri — resmi.", tags:["kediri","jawa timur","imigrasi","resmi"] },
-      { url:"https://jember.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Jember — resmi.", tags:["jember","jawa timur","imigrasi","resmi"] },
-      { url:"https://banyuwangi.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II TPI Banyuwangi — resmi.", tags:["banyuwangi","jawa timur","imigrasi","resmi"] },
-      { url:"https://madiun.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Madiun — resmi.", tags:["madiun","jawa timur","imigrasi","resmi"] },
-      { url:"https://mojokerto.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas II Non TPI Mojokerto — resmi.", tags:["mojokerto","jawa timur","imigrasi","resmi"] },
+// ─── OFFICIAL DOMAIN DATA (from PDF: WEBSITE SATUAN KERJA DITJENIM 2026) ───
+const officialDomains = [
+  // ACEH
+  {no:1, nama:"KANWIL DITJENIM ACEH", domain:"kanwilaceh.imigrasi.go.id", region:"aceh"},
+  {no:2, nama:"Kantor Imigrasi Kelas I TPI Banda Aceh", domain:"bandaaceh.imigrasi.go.id", region:"aceh banda aceh"},
+  {no:3, nama:"Kantor Imigrasi Kelas II Non TPI Meulaboh", domain:"meulaboh.imigrasi.go.id", region:"aceh meulaboh"},
+  {no:4, nama:"Kantor Imigrasi Kelas II TPI Langsa", domain:"langsa.imigrasi.go.id", region:"aceh langsa"},
+  {no:5, nama:"Kantor Imigrasi Kelas II TPI Lhokseumawe", domain:"lhokseumawe.imigrasi.go.id", region:"aceh lhokseumawe"},
+  {no:6, nama:"Kantor Imigrasi Kelas II TPI Sabang", domain:"sabang.imigrasi.go.id", region:"aceh sabang"},
+  {no:7, nama:"Kantor Imigrasi Kelas III Non TPI Takengon", domain:"takengon.imigrasi.go.id", region:"aceh takengon"},
+  // BALI
+  {no:8, nama:"KANWIL DITJENIM BALI", domain:"kanwilbali.imigrasi.go.id", region:"bali"},
+  {no:9, nama:"Kantor Imigrasi Kelas I Khusus TPI Ngurah Rai", domain:"ngurahrai.imigrasi.go.id", region:"bali ngurah rai denpasar"},
+  {no:10, nama:"Kantor Imigrasi Kelas I TPI Denpasar", domain:"denpasar.imigrasi.go.id", region:"bali denpasar"},
+  {no:11, nama:"Kantor Imigrasi Kelas II Non TPI Singaraja", domain:"singaraja.imigrasi.go.id", region:"bali singaraja"},
+  {no:12, nama:"Rumah Detensi Imigrasi Denpasar", domain:"rudenimdenpasar.imigrasi.go.id", region:"bali denpasar rudenim"},
+  // BANTEN
+  {no:13, nama:"KANWIL DITJENIM BANTEN", domain:"kanwilbanten.imigrasi.go.id", region:"banten"},
+  {no:14, nama:"Kantor Imigrasi Kelas I Khusus Non TPI Tangerang", domain:"tangerang.imigrasi.go.id", region:"banten tangerang"},
+  {no:15, nama:"Kantor Imigrasi Kelas I Non TPI Serang", domain:"serang.imigrasi.go.id", region:"banten serang"},
+  {no:16, nama:"Kantor Imigrasi Kelas II TPI Cilegon", domain:"cilegon.imigrasi.go.id", region:"banten cilegon"},
+  // BENGKULU
+  {no:17, nama:"KANWIL DITJENIM BENGKULU", domain:"kanwilbengkulu.imigrasi.go.id", region:"bengkulu"},
+  {no:18, nama:"Kantor Imigrasi Kelas I TPI Bengkulu", domain:"bengkulu.imigrasi.go.id", region:"bengkulu"},
+  // DIY
+  {no:19, nama:"KANWIL DITJENIM DI YOGYAKARTA", domain:"kanwilyogyakarta.imigrasi.go.id", region:"yogyakarta jogja diy"},
+  {no:20, nama:"Kantor Imigrasi Kelas I TPI Yogyakarta", domain:"yogyakarta.imigrasi.go.id", region:"yogyakarta jogja diy"},
+  // JAKARTA
+  {no:21, nama:"KANWIL DITJENIM DKI JAKARTA", domain:"kanwiljakarta.imigrasi.go.id", region:"jakarta dki"},
+  {no:22, nama:"Kantor Imigrasi Kelas I Khusus Non TPI Jakarta Barat", domain:"jakartabarat.imigrasi.go.id", region:"jakarta barat jakbar"},
+  {no:23, nama:"Kantor Imigrasi Kelas I Khusus Non TPI Jakarta Selatan", domain:"jakartaselatan.imigrasi.go.id", region:"jakarta selatan jaksel"},
+  {no:24, nama:"Kantor Imigrasi Kelas I Khusus TPI Soekarno Hatta", domain:"soekarnohatta.imigrasi.go.id", region:"jakarta tangerang bandara soekarno hatta"},
+  {no:25, nama:"Kantor Imigrasi Kelas I Non TPI Jakarta Pusat", domain:"jakartapusat.imigrasi.go.id", region:"jakarta pusat jakpus"},
+  {no:26, nama:"Kantor Imigrasi Kelas I TPI Jakarta Timur", domain:"jakartatimur.imigrasi.go.id", region:"jakarta timur jaktim"},
+  {no:27, nama:"Kantor Imigrasi Kelas I TPI Jakarta Utara", domain:"jakartautara.imigrasi.go.id", region:"jakarta utara jakut"},
+  {no:28, nama:"Kantor Imigrasi Kelas I TPI Tanjung Priok", domain:"tanjungpriok.imigrasi.go.id", region:"jakarta utara tanjung priok pelabuhan"},
+  {no:29, nama:"Rumah Detensi Imigrasi Jakarta", domain:"rudenimjakarta.imigrasi.go.id", region:"jakarta rudenim"},
+  // GORONTALO
+  {no:30, nama:"KANWIL DITJENIM GORONTALO", domain:"kanwilgorontalo.imigrasi.go.id", region:"gorontalo sulawesi"},
+  {no:31, nama:"Kantor Imigrasi Kelas I TPI Gorontalo", domain:"gorontalo.imigrasi.go.id", region:"gorontalo"},
+  // JAMBI
+  {no:32, nama:"KANWIL DITJENIM JAMBI", domain:"kanwiljambi.imigrasi.go.id", region:"jambi sumatera"},
+  {no:33, nama:"Kantor Imigrasi Kelas I TPI Jambi", domain:"jambi.imigrasi.go.id", region:"jambi"},
+  {no:34, nama:"Kantor Imigrasi Kelas II Non TPI Kerinci", domain:"kerinci.imigrasi.go.id", region:"jambi kerinci"},
+  {no:35, nama:"Kantor Imigrasi Kelas II TPI Kuala Tungkal", domain:"kualatungkal.imigrasi.go.id", region:"jambi kuala tungkal"},
+  {no:36, nama:"Kantor Imigrasi Kelas III Non TPI Bungo", domain:"bungo.imigrasi.go.id", region:"jambi bungo"},
+  // JAWA BARAT
+  {no:37, nama:"KANWIL DITJENIM JAWA BARAT", domain:"kanwiljabar.imigrasi.go.id", region:"jawa barat jabar"},
+  {no:38, nama:"Kantor Imigrasi Kelas I Non TPI Bekasi", domain:"bekasi.imigrasi.go.id", region:"jawa barat bekasi"},
+  {no:39, nama:"Kantor Imigrasi Kelas I Non TPI Bogor", domain:"bogor.imigrasi.go.id", region:"jawa barat bogor"},
+  {no:40, nama:"Kantor Imigrasi Kelas I Non TPI Depok", domain:"depok.imigrasi.go.id", region:"jawa barat depok"},
+  {no:41, nama:"Kantor Imigrasi Kelas I Non TPI Karawang", domain:"karawang.imigrasi.go.id", region:"jawa barat karawang"},
+  {no:42, nama:"Kantor Imigrasi Kelas I Non TPI Sukabumi", domain:"sukabumi.imigrasi.go.id", region:"jawa barat sukabumi"},
+  {no:43, nama:"Kantor Imigrasi Kelas I Non TPI Tasikmalaya", domain:"tasikmalaya.imigrasi.go.id", region:"jawa barat tasikmalaya tasik"},
+  {no:44, nama:"Kantor Imigrasi Kelas I TPI Bandung", domain:"bandung.imigrasi.go.id", region:"jawa barat bandung"},
+  {no:45, nama:"Kantor Imigrasi Kelas I TPI Cirebon", domain:"cirebon.imigrasi.go.id", region:"jawa barat cirebon"},
+  {no:46, nama:"Kantor Imigrasi Kelas III Non TPI Cianjur", domain:"cianjur.imigrasi.go.id", region:"jawa barat cianjur"},
+  {no:47, nama:"Kantor Imigrasi Kelas II Non TPI Garut", domain:"garut.imigrasi.go.id", region:"jawa barat garut"},
+  // JAWA TENGAH
+  {no:48, nama:"KANWIL DITJENIM JAWA TENGAH", domain:"kanwiljateng.imigrasi.go.id", region:"jawa tengah jateng"},
+  {no:49, nama:"Kantor Imigrasi Kelas I Khusus TPI Semarang", domain:"semarang.imigrasi.go.id", region:"jawa tengah semarang"},
+  {no:50, nama:"Kantor Imigrasi Kelas I Non TPI Pati", domain:"pati.imigrasi.go.id", region:"jawa tengah pati"},
+  {no:51, nama:"Kantor Imigrasi Kelas I Non TPI Pemalang", domain:"pemalang.imigrasi.go.id", region:"jawa tengah pemalang"},
+  {no:52, nama:"Kantor Imigrasi Kelas I TPI Cilacap", domain:"cilacap.imigrasi.go.id", region:"jawa tengah cilacap"},
+  {no:53, nama:"Kantor Imigrasi Kelas I TPI Surakarta", domain:"surakarta.imigrasi.go.id", region:"jawa tengah solo surakarta"},
+  {no:54, nama:"Kantor Imigrasi Kelas II Non TPI Wonosobo", domain:"wonosobo.imigrasi.go.id", region:"jawa tengah wonosobo"},
+  {no:55, nama:"Rumah Detensi Imigrasi Semarang", domain:"rudenimsemarang.imigrasi.go.id", region:"jawa tengah semarang rudenim"},
+  {no:56, nama:"Kantor Imigrasi Kelas II Non TPI Tegal", domain:"tegal.imigrasi.go.id", region:"jawa tengah tegal"},
+  {no:57, nama:"Kantor Imigrasi Kelas II Non TPI Purworejo", domain:"purworejo.imigrasi.go.id", region:"jawa tengah purworejo"},
+  {no:58, nama:"Kantor Imigrasi Kelas I Non TPI Blora", domain:"blora.imigrasi.go.id", region:"jawa tengah blora"},
+  // JAWA TIMUR
+  {no:59, nama:"KANWIL DITJENIM JAWA TIMUR", domain:"kanwiljatim.imigrasi.go.id", region:"jawa timur jatim"},
+  {no:60, nama:"Kantor Imigrasi Kelas I Khusus TPI Surabaya", domain:"surabaya.imigrasi.go.id", region:"jawa timur surabaya sby"},
+  {no:61, nama:"Kantor Imigrasi Kelas I TPI Malang", domain:"malang.imigrasi.go.id", region:"jawa timur malang"},
+  {no:62, nama:"Kantor Imigrasi Kelas I TPI Jember", domain:"jember.imigrasi.go.id", region:"jawa timur jember"},
+  {no:63, nama:"Kantor Imigrasi Kelas I TPI Tanjung Perak", domain:"tanjungperak.imigrasi.go.id", region:"jawa timur surabaya tanjung perak"},
+  {no:64, nama:"Kantor Imigrasi Kelas II Non TPI Blitar", domain:"blitar.imigrasi.go.id", region:"jawa timur blitar"},
+  {no:65, nama:"Kantor Imigrasi Kelas II Non TPI Kediri", domain:"kediri.imigrasi.go.id", region:"jawa timur kediri"},
+  {no:66, nama:"Kantor Imigrasi Kelas II Non TPI Madiun", domain:"madiun.imigrasi.go.id", region:"jawa timur madiun"},
+  {no:67, nama:"Kantor Imigrasi Kelas III Non TPI Pamekasan", domain:"pamekasan.imigrasi.go.id", region:"jawa timur pamekasan madura"},
+  {no:68, nama:"Kantor Imigrasi Kelas II Non TPI Ponorogo", domain:"ponorogo.imigrasi.go.id", region:"jawa timur ponorogo"},
+  {no:69, nama:"Kantor Imigrasi Kelas III TPI Banyuwangi", domain:"banyuwangi.imigrasi.go.id", region:"jawa timur banyuwangi"},
+  {no:70, nama:"Rumah Detensi Imigrasi Surabaya", domain:"rudenimsurabaya.imigrasi.go.id", region:"jawa timur surabaya rudenim"},
+  {no:71, nama:"Kantor Imigrasi Kelas III Non TPI Pasuruan", domain:"pasuruan.imigrasi.go.id", region:"jawa timur pasuruan"},
+  // KALBAR
+  {no:72, nama:"KANWIL DITJENIM KALIMANTAN BARAT", domain:"kanwilkalbar.imigrasi.go.id", region:"kalimantan barat kalbar"},
+  {no:73, nama:"Kantor Imigrasi Kelas I TPI Pontianak", domain:"pontianak.imigrasi.go.id", region:"kalimantan barat pontianak"},
+  {no:74, nama:"Kantor Imigrasi Kelas I TPI Singkawang", domain:"singkawang.imigrasi.go.id", region:"kalimantan barat singkawang"},
+  {no:75, nama:"Kantor Imigrasi Kelas II TPI Entikong", domain:"entikong.imigrasi.go.id", region:"kalimantan barat entikong"},
+  {no:76, nama:"Kantor Imigrasi Kelas II TPI Sambas", domain:"sambas.imigrasi.go.id", region:"kalimantan barat sambas"},
+  {no:77, nama:"Kantor Imigrasi Kelas II TPI Sanggau", domain:"sanggau.imigrasi.go.id", region:"kalimantan barat sanggau"},
+  {no:78, nama:"Kantor Imigrasi Kelas III Non TPI Ketapang", domain:"ketapang.imigrasi.go.id", region:"kalimantan barat ketapang"},
+  {no:79, nama:"Kantor Imigrasi Kelas III TPI Putussibau", domain:"putussibau.imigrasi.go.id", region:"kalimantan barat putussibau"},
+  {no:80, nama:"Rumah Detensi Imigrasi Pontianak", domain:"rudenimpontianak.imigrasi.go.id", region:"kalimantan barat pontianak rudenim"},
+  // KALTIM
+  {no:81, nama:"KANWIL DITJENIM KALIMANTAN TIMUR", domain:"kanwilkaltim.imigrasi.go.id", region:"kalimantan timur kaltim"},
+  {no:82, nama:"Kantor Imigrasi Kelas I TPI Balikpapan", domain:"balikpapan.imigrasi.go.id", region:"kalimantan timur balikpapan"},
+  {no:83, nama:"Kantor Imigrasi Kelas I TPI Samarinda", domain:"samarinda.imigrasi.go.id", region:"kalimantan timur samarinda"},
+  {no:84, nama:"Kantor Imigrasi Kelas I TPI Tarakan", domain:"tarakan.imigrasi.go.id", region:"kalimantan timur tarakan"},
+  {no:85, nama:"Kantor Imigrasi Kelas I TPI Nunukan", domain:"nunukan.imigrasi.go.id", region:"kalimantan timur nunukan"},
+  {no:86, nama:"Kantor Imigrasi Kelas II Non TPI Kutai Barat", domain:"kutaibarat.imigrasi.go.id", region:"kalimantan timur kutai barat"},
+  {no:87, nama:"Kantor Imigrasi Kelas I TPI Morowali", domain:"morowali.imigrasi.go.id", region:"sulawesi tengah morowali"},
+  // KALSEL
+  {no:88, nama:"KANWIL DITJENIM KALIMANTAN SELATAN", domain:"kanwilkalsel.imigrasi.go.id", region:"kalimantan selatan kalsel"},
+  {no:89, nama:"Kantor Imigrasi Kelas I TPI Banjarmasin", domain:"banjarmasin.imigrasi.go.id", region:"kalimantan selatan banjarmasin"},
+  {no:90, nama:"Kantor Imigrasi Kelas II Non TPI Kotabaru", domain:"kotabaru.imigrasi.go.id", region:"kalimantan selatan kotabaru"},
+  // KEPRI
+  {no:91, nama:"KANWIL DITJENIM KEPULAUAN RIAU", domain:"kanwilkepri.imigrasi.go.id", region:"kepulauan riau kepri"},
+  {no:92, nama:"Kantor Imigrasi Kelas I Khusus TPI Batam", domain:"batam.imigrasi.go.id", region:"kepulauan riau batam"},
+  {no:93, nama:"Kantor Imigrasi Kelas I TPI Tanjung Pinang", domain:"tanjungpinang.imigrasi.go.id", region:"kepulauan riau tanjung pinang"},
+  {no:94, nama:"Kantor Imigrasi Kelas II TPI Tanjung Balai Karimun", domain:"tanjungbalaikarimun.imigrasi.go.id", region:"kepulauan riau karimun"},
+  // LAMPUNG
+  {no:95, nama:"KANWIL DITJENIM LAMPUNG", domain:"kanwillampung.imigrasi.go.id", region:"lampung"},
+  {no:96, nama:"Kantor Imigrasi Kelas I TPI Bandar Lampung", domain:"bandarlampung.imigrasi.go.id", region:"lampung bandar lampung"},
+  {no:97, nama:"Kantor Imigrasi Kelas II TPI Kalianda", domain:"kalianda.imigrasi.go.id", region:"lampung kalianda"},
+  {no:98, nama:"Kantor Imigrasi Kelas II Non TPI Kotabumi", domain:"kotabumi.imigrasi.go.id", region:"lampung kotabumi"},
+  // MALUKU
+  {no:99, nama:"KANWIL DITJENIM MALUKU", domain:"kanwilmaluku.imigrasi.go.id", region:"maluku"},
+  {no:100,nama:"Kantor Imigrasi Kelas I TPI Ambon", domain:"ambon.imigrasi.go.id", region:"maluku ambon"},
+  {no:101,nama:"Kantor Imigrasi Kelas II TPI Tual", domain:"tual.imigrasi.go.id", region:"maluku tual"},
+  // MALUKU UTARA
+  {no:102,nama:"KANWIL DITJENIM MALUKU UTARA", domain:"kanwilmalut.imigrasi.go.id", region:"maluku utara malut"},
+  {no:103,nama:"Kantor Imigrasi Kelas I TPI Ternate", domain:"ternate.imigrasi.go.id", region:"maluku utara ternate"},
+  {no:104,nama:"Kantor Imigrasi Kelas II Non TPI Tobelo", domain:"tobelo.imigrasi.go.id", region:"maluku utara tobelo"},
+  // NTB
+  {no:105,nama:"KANWIL DITJENIM NUSA TENGGARA BARAT", domain:"kanwilntb.imigrasi.go.id", region:"nusa tenggara barat ntb lombok"},
+  {no:106,nama:"Kantor Imigrasi Kelas I TPI Mataram", domain:"mataram.imigrasi.go.id", region:"ntb mataram lombok"},
+  {no:107,nama:"Kantor Imigrasi Kelas II TPI Sumbawa Besar", domain:"sumbawabesar.imigrasi.go.id", region:"ntb sumbawa"},
+  {no:108,nama:"Kantor Imigrasi Kelas III Non TPI Bima", domain:"bima.imigrasi.go.id", region:"ntb bima"},
+  {no:109,nama:"Kantor Imigrasi Kelas II TPI Kulon Progo", domain:"kulonprogo.imigrasi.go.id", region:"yogyakarta kulon progo"},
+  {no:110,nama:"Kantor Imigrasi Kelas II Non TPI Lombok Timur", domain:"lomboktimur.imigrasi.go.id", region:"ntb lombok timur"},
+  // NTT
+  {no:111,nama:"KANWIL DITJENIM NUSA TENGGARA TIMUR", domain:"kanwilntt.imigrasi.go.id", region:"nusa tenggara timur ntt"},
+  {no:112,nama:"Kantor Imigrasi Kelas I TPI Kupang", domain:"kupang.imigrasi.go.id", region:"ntt kupang"},
+  {no:113,nama:"Kantor Imigrasi Kelas II TPI Atambua", domain:"atambua.imigrasi.go.id", region:"ntt atambua"},
+  {no:114,nama:"Kantor Imigrasi Kelas II TPI Labuan Bajo", domain:"labuanbajo.imigrasi.go.id", region:"ntt labuan bajo flores"},
+  {no:115,nama:"Kantor Imigrasi Kelas II TPI Maumere", domain:"maumere.imigrasi.go.id", region:"ntt maumere flores"},
+  {no:116,nama:"Rumah Detensi Imigrasi Kupang", domain:"rudenimkupang.imigrasi.go.id", region:"ntt kupang rudenim"},
+  // PAPUA
+  {no:117,nama:"KANWIL DITJENIM PAPUA", domain:"kanwilpapua.imigrasi.go.id", region:"papua"},
+  {no:118,nama:"Kantor Imigrasi Kelas I TPI Jayapura", domain:"jayapura.imigrasi.go.id", region:"papua jayapura"},
+  {no:119,nama:"Kantor Imigrasi Kelas II TPI Biak", domain:"biak.imigrasi.go.id", region:"papua biak"},
+  {no:120,nama:"Kantor Imigrasi Kelas II TPI Merauke", domain:"merauke.imigrasi.go.id", region:"papua merauke"},
+  {no:121,nama:"Kantor Imigrasi Kelas II TPI Mimika", domain:"mimika.imigrasi.go.id", region:"papua mimika timika"},
+  {no:122,nama:"Rumah Detensi Imigrasi Jayapura", domain:"rudenimjayapura.imigrasi.go.id", region:"papua jayapura rudenim"},
+  // PAPUA BARAT
+  {no:123,nama:"KANWIL DITJENIM PAPUA BARAT", domain:"kanwilpapuabarat.imigrasi.go.id", region:"papua barat"},
+  {no:124,nama:"Kantor Imigrasi Kelas I Non TPI Manokwari", domain:"manokwari.imigrasi.go.id", region:"papua barat manokwari"},
+  {no:125,nama:"Kantor Imigrasi Kelas II TPI Sorong", domain:"sorong.imigrasi.go.id", region:"papua barat sorong"},
+  // RIAU
+  {no:126,nama:"KANWIL DITJENIM RIAU", domain:"kanwilriau.imigrasi.go.id", region:"riau sumatera"},
+  {no:127,nama:"Kantor Imigrasi Kelas I TPI Dumai", domain:"dumai.imigrasi.go.id", region:"riau dumai"},
+  {no:128,nama:"Kantor Imigrasi Kelas I TPI Pekanbaru", domain:"pekanbaru.imigrasi.go.id", region:"riau pekanbaru"},
+  {no:129,nama:"Kantor Imigrasi Kelas II TPI Bagan Siapiapi", domain:"bagansiapiapi.imigrasi.go.id", region:"riau bagan siapiapi"},
+  {no:130,nama:"Kantor Imigrasi Kelas II TPI Bengkalis", domain:"bengkalis.imigrasi.go.id", region:"riau bengkalis"},
+  {no:131,nama:"Kantor Imigrasi Kelas II TPI Selat Panjang", domain:"selatpanjang.imigrasi.go.id", region:"riau selat panjang"},
+  {no:132,nama:"Kantor Imigrasi Kelas II TPI Siak", domain:"siak.imigrasi.go.id", region:"riau siak"},
+  {no:133,nama:"Kantor Imigrasi Kelas II TPI Tembilahan", domain:"tembilahan.imigrasi.go.id", region:"riau tembilahan"},
+  {no:134,nama:"Rumah Detensi Imigrasi Pekanbaru", domain:"rudenimpekanbaru.imigrasi.go.id", region:"riau pekanbaru rudenim"},
+  // SULBAR
+  {no:135,nama:"KANWIL DITJENIM SULAWESI BARAT", domain:"kanwilsulbar.imigrasi.go.id", region:"sulawesi barat sulbar"},
+  {no:136,nama:"Kantor Imigrasi Kelas II Non TPI Mamuju", domain:"mamuju.imigrasi.go.id", region:"sulawesi barat mamuju"},
+  {no:137,nama:"Kantor Imigrasi Kelas II Non TPI Polewali Mandar", domain:"polewalimandar.imigrasi.go.id", region:"sulawesi barat polewali mandar"},
+  // SULSEL
+  {no:138,nama:"KANWIL DITJENIM SULAWESI SELATAN", domain:"kanwilsulsel.imigrasi.go.id", region:"sulawesi selatan sulsel"},
+  {no:139,nama:"Kantor Imigrasi Kelas I Khusus TPI Makassar", domain:"makassar.imigrasi.go.id", region:"sulawesi selatan makassar"},
+  {no:140,nama:"Kantor Imigrasi Kelas II TPI Parepare", domain:"parepare.imigrasi.go.id", region:"sulawesi selatan parepare"},
+  {no:141,nama:"Kantor Imigrasi Kelas III Non TPI Palopo", domain:"palopo.imigrasi.go.id", region:"sulawesi selatan palopo"},
+  {no:142,nama:"Rumah Detensi Imigrasi Makassar", domain:"rudenimmakassar.imigrasi.go.id", region:"sulawesi selatan makassar rudenim"},
+  {no:143,nama:"Kantor Imigrasi Kelas III Non TPI Bantaeng", domain:"bantaeng.imigrasi.go.id", region:"sulawesi selatan bantaeng"},
+  {no:144,nama:"Kantor Imigrasi Kelas III Non TPI Bone", domain:"bone.imigrasi.go.id", region:"sulawesi selatan bone"},
+  // SULTENG
+  {no:145,nama:"KANWIL DITJENIM SULAWESI TENGAH", domain:"kanwilsulteng.imigrasi.go.id", region:"sulawesi tengah sulteng"},
+  {no:146,nama:"Kantor Imigrasi Kelas I TPI Palu", domain:"palu.imigrasi.go.id", region:"sulawesi tengah palu"},
+  {no:147,nama:"Kantor Imigrasi Kelas II Non TPI Banggai", domain:"banggai.imigrasi.go.id", region:"sulawesi tengah banggai"},
+  // SULTRA
+  {no:148,nama:"KANWIL DITJENIM SULAWESI TENGGARA", domain:"kanwilsultra.imigrasi.go.id", region:"sulawesi tenggara sultra"},
+  {no:149,nama:"Kantor Imigrasi Kelas I TPI Kendari", domain:"kendari.imigrasi.go.id", region:"sulawesi tenggara kendari"},
+  {no:150,nama:"Kantor Imigrasi Kelas II Non TPI Bau-Bau", domain:"baubau.imigrasi.go.id", region:"sulawesi tenggara bau-bau"},
+  {no:151,nama:"Kantor Imigrasi Kelas III Non TPI Wakatobi", domain:"wakatobi.imigrasi.go.id", region:"sulawesi tenggara wakatobi"},
+  // SULUT
+  {no:152,nama:"KANWIL DITJENIM SULAWESI UTARA", domain:"kanwilsulut.imigrasi.go.id", region:"sulawesi utara sulut"},
+  {no:153,nama:"Kantor Imigrasi Kelas I TPI Manado", domain:"manado.imigrasi.go.id", region:"sulawesi utara manado"},
+  {no:154,nama:"Kantor Imigrasi Kelas II Non TPI Kotamobagu", domain:"kotamobagu.imigrasi.go.id", region:"sulawesi utara kotamobagu"},
+  {no:155,nama:"Kantor Imigrasi Kelas II TPI Bitung", domain:"bitung.imigrasi.go.id", region:"sulawesi utara bitung"},
+  {no:156,nama:"Kantor Imigrasi Kelas II TPI Tahuna", domain:"tahuna.imigrasi.go.id", region:"sulawesi utara tahuna sangihe"},
+  {no:157,nama:"Rumah Detensi Imigrasi Manado", domain:"rudenimmanado.imigrasi.go.id", region:"sulawesi utara manado rudenim"},
+  // SUMBAR
+  {no:158,nama:"KANWIL DITJENIM SUMATERA BARAT", domain:"kanwilsumbar.imigrasi.go.id", region:"sumatera barat sumbar"},
+  {no:159,nama:"Kantor Imigrasi Kelas I TPI Padang", domain:"padang.imigrasi.go.id", region:"sumatera barat padang"},
+  {no:160,nama:"Kantor Imigrasi Kelas I Non TPI Agam", domain:"agam.imigrasi.go.id", region:"sumatera barat agam bukittinggi"},
+  // SUMSEL
+  {no:161,nama:"KANWIL DITJENIM SUMATERA SELATAN", domain:"kanwilsumsel.imigrasi.go.id", region:"sumatera selatan sumsel"},
+  {no:162,nama:"Kantor Imigrasi Kelas I TPI Palembang", domain:"palembang.imigrasi.go.id", region:"sumatera selatan palembang"},
+  {no:163,nama:"Kantor Imigrasi Kelas II Non TPI Muara Enim", domain:"muaraenim.imigrasi.go.id", region:"sumatera selatan muara enim"},
+  {no:164,nama:"Kantor Imigrasi Kelas III Non TPI Lubuklinggau", domain:"lubuklinggau.imigrasi.go.id", region:"sumatera selatan lubuk linggau"},
+  // SUMUT
+  {no:165,nama:"KANWIL DITJENIM SUMATERA UTARA", domain:"kanwilsumut.imigrasi.go.id", region:"sumatera utara sumut"},
+  {no:166,nama:"Kantor Imigrasi Kelas I Khusus TPI Medan", domain:"medan.imigrasi.go.id", region:"sumatera utara medan"},
+  {no:167,nama:"Kantor Imigrasi Kelas II Non TPI Pematang Siantar", domain:"pematangsiantar.imigrasi.go.id", region:"sumatera utara pematang siantar"},
+  {no:168,nama:"Kantor Imigrasi Kelas II TPI Belawan", domain:"belawan.imigrasi.go.id", region:"sumatera utara medan belawan"},
+  {no:169,nama:"Kantor Imigrasi Kelas I TPI Polonia", domain:"polonia.imigrasi.go.id", region:"sumatera utara medan polonia"},
+  {no:170,nama:"Kantor Imigrasi Kelas II TPI Tanjung Balai Asahan", domain:"tanjungbalaiasahan.imigrasi.go.id", region:"sumatera utara tanjung balai asahan"},
+  {no:171,nama:"Kantor Imigrasi Kelas II TPI Sibolga", domain:"sibolga.imigrasi.go.id", region:"sumatera utara sibolga"},
+  {no:172,nama:"Kantor Imigrasi Kelas III Non TPI Mandailing Natal", domain:"mandailingnatal.imigrasi.go.id", region:"sumatera utara mandailing natal"},
+  {no:173,nama:"Kantor Imigrasi Kelas III TPI Nias", domain:"nias.imigrasi.go.id", region:"sumatera utara nias"},
+  {no:174,nama:"Rumah Detensi Imigrasi Medan", domain:"rudenimmedan.imigrasi.go.id", region:"sumatera utara medan rudenim"},
+  {no:175,nama:"Kantor Imigrasi Kelas III Non TPI Padang Sidimpuan", domain:"padangsidimpuan.imigrasi.go.id", region:"sumatera utara padang sidimpuan"},
+  {no:176,nama:"Kantor Imigrasi Kelas III Non TPI Tapanuli Utara", domain:"tapanuliutara.imigrasi.go.id", region:"sumatera utara tapanuli utara"},
+  // BENGKULU TAMBAHAN
+  {no:177,nama:"Kantor Imigrasi Kelas III Non TPI Bengkulu Utara", domain:"bengkuluutara.imigrasi.go.id", region:"bengkulu bengkulu utara"},
+  // KALBAR TAMBAHAN
+  {no:178,nama:"Kantor Imigrasi Kelas III Non TPI Mempawah", domain:"mempawah.imigrasi.go.id", region:"kalimantan barat mempawah"},
+  // BALI TAMBAHAN
+  {no:179,nama:"Kantor Imigrasi Kelas III Non TPI Klungkung", domain:"klungkung.imigrasi.go.id", region:"bali klungkung"},
+  {no:180,nama:"Kantor Imigrasi Kelas III Non TPI Tabanan", domain:"tabanan.imigrasi.go.id", region:"bali tabanan"},
+  // SULSEL TAMBAHAN
+  {no:181,nama:"Kantor Imigrasi Kelas III Non TPI Pohuwato", domain:"pohuwato.imigrasi.go.id", region:"gorontalo pohuwato"},
+  // PERWAKILAN LUAR NEGERI
+  {no:182,nama:"Perwakilan Imigrasi di Bangkok", domain:"bangkok.imigrasi.go.id", region:"luar negeri thailand bangkok"},
+  {no:183,nama:"Perwakilan Imigrasi di Beijing", domain:"beijing.imigrasi.go.id", region:"luar negeri china beijing"},
+  {no:184,nama:"Perwakilan Imigrasi di Berlin", domain:"berlin.imigrasi.go.id", region:"luar negeri jerman berlin"},
+  {no:185,nama:"Perwakilan Imigrasi di Davao", domain:"davao.imigrasi.go.id", region:"luar negeri filipina davao"},
+  {no:186,nama:"Perwakilan Imigrasi di Den Haag", domain:"denhaag.imigrasi.go.id", region:"luar negeri belanda den haag"},
+  {no:187,nama:"Perwakilan Imigrasi di Hongkong", domain:"hongkong.imigrasi.go.id", region:"luar negeri hongkong"},
+  {no:188,nama:"Perwakilan Imigrasi di Jeddah", domain:"jeddah.imigrasi.go.id", region:"luar negeri arab saudi jeddah"},
+  {no:189,nama:"Perwakilan Imigrasi di Johor Bahru", domain:"johorbahru.imigrasi.go.id", region:"luar negeri malaysia johor bahru"},
+  {no:190,nama:"Perwakilan Imigrasi di Kinabalu", domain:"kinabalu.imigrasi.go.id", region:"luar negeri malaysia sabah kinabalu"},
+  {no:191,nama:"Perwakilan Imigrasi di Kuala Lumpur", domain:"kualalumpur.imigrasi.go.id", region:"luar negeri malaysia kuala lumpur"},
+  {no:192,nama:"Perwakilan Imigrasi di Kuching", domain:"kuching.imigrasi.go.id", region:"luar negeri malaysia kuching sarawak"},
+  {no:193,nama:"Perwakilan Imigrasi di Los Angeles", domain:"losangeles.imigrasi.go.id", region:"luar negeri amerika los angeles"},
+  {no:194,nama:"Perwakilan Imigrasi di Penang", domain:"penang.imigrasi.go.id", region:"luar negeri malaysia penang"},
+  {no:195,nama:"Perwakilan Imigrasi di Sydney", domain:"sydney.imigrasi.go.id", region:"luar negeri australia sydney"},
+  {no:196,nama:"Perwakilan Imigrasi di Singapura", domain:"singapura.imigrasi.go.id", region:"luar negeri singapura"},
+  {no:197,nama:"Perwakilan Imigrasi di Tawau", domain:"tawau.imigrasi.go.id", region:"luar negeri malaysia tawau"},
+  {no:198,nama:"Perwakilan Imigrasi di Seoul", domain:"seoul.imigrasi.go.id", region:"luar negeri korea seoul"},
+  {no:199,nama:"Perwakilan Imigrasi di Songkhla", domain:"songkhla.imigrasi.go.id", region:"luar negeri thailand songkhla"},
+  {no:200,nama:"Perwakilan Imigrasi di Taipei Taiwan", domain:"taipei.imigrasi.go.id", region:"luar negeri taiwan taipei"},
+  {no:201,nama:"Perwakilan Imigrasi di Tokyo", domain:"tokyo.imigrasi.go.id", region:"luar negeri jepang tokyo"},
+  {no:202,nama:"Perwakilan Imigrasi di Guangzhou", domain:"guangzhou.imigrasi.go.id", region:"luar negeri china guangzhou"},
+  {no:203,nama:"Perwakilan Imigrasi di Dili", domain:"dili.imigrasi.go.id", region:"luar negeri timor leste dili"},
+  // PUSAT
+  {no:204,nama:"DIREKTORAT JENDERAL IMIGRASI (Pusat)", domain:"imigrasi.go.id", region:"pusat nasional imigrasi indonesia"},
+  {no:205,nama:"Portal Visa Online Ditjen Imigrasi", domain:"visa-online.imigrasi.go.id", region:"visa online pusat nasional"},
+  {no:206,nama:"Sistem Antrian Online Ditjen Imigrasi", domain:"antrian.imigrasi.go.id", region:"antrian paspor online pusat nasional"},
+  {no:207,nama:"Portal e-Visa Ditjen Imigrasi", domain:"evisa.imigrasi.go.id", region:"evisa visa online pusat nasional"},
+];
 
-      // Sumatra
-      { url:"https://medan.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Khusus TPI Medan — resmi.", tags:["medan","sumatera utara","sumut","imigrasi","resmi","paspor"] },
-      { url:"https://batam.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Khusus TPI Batam — resmi.", tags:["batam","kepri","kepulauan riau","imigrasi","resmi"] },
-      { url:"https://palembang.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Palembang — resmi.", tags:["palembang","sumatera selatan","sumsel","imigrasi","resmi"] },
-      { url:"https://pekanbaru.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Pekanbaru — resmi.", tags:["pekanbaru","riau","imigrasi","resmi"] },
-      { url:"https://padang.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Padang — resmi.", tags:["padang","sumatera barat","sumbar","imigrasi","resmi"] },
-      { url:"https://banda-aceh.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Banda Aceh — resmi.", tags:["aceh","banda aceh","imigrasi","resmi"] },
-      { url:"https://lampung.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Bandar Lampung — resmi.", tags:["lampung","bandar lampung","imigrasi","resmi"] },
+// ─── FAKE DOMAIN DATA (mencurigakan / potensi scam) ───
+const fakeDomains = [
+  {region:"tasikmalaya", city:"Tasikmalaya", officialDomain:"tasikmalaya.imigrasi.go.id", fakeDomain:"https://imigrasitasikmalaya.id", score:55, desc:"Domain .id menyamar nama kantor imigrasi Tasikmalaya"},
+  {region:"tasikmalaya", city:"Tasikmalaya", officialDomain:"tasikmalaya.imigrasi.go.id", fakeDomain:"http://kantor-imigrasi-tasikmalaya.com", score:85, desc:"HTTP tanpa enkripsi, domain .com palsu"},
+  {region:"tasikmalaya", city:"Tasikmalaya", officialDomain:"tasikmalaya.imigrasi.go.id", fakeDomain:"https://imigrasitasik.net", score:70, desc:"Domain .net dengan nama kependekan Tasikmalaya"},
+  {region:"tasikmalaya", city:"Tasikmalaya", officialDomain:"tasikmalaya.imigrasi.go.id", fakeDomain:"http://layanan-paspor-tasikmalaya.blogspot.com", score:100, desc:"Blogspot gratis + HTTP, potensi scam tinggi"},
+  {region:"bandung", city:"Bandung", officialDomain:"bandung.imigrasi.go.id", fakeDomain:"https://imigrasibandung.id", score:55, desc:"Domain .id nama imigrasi Bandung, bukan .go.id"},
+  {region:"bandung", city:"Bandung", officialDomain:"bandung.imigrasi.go.id", fakeDomain:"http://kantor-imigrasi-bandung.com", score:85, desc:"HTTP + .com menyamar kantor imigrasi Bandung"},
+  {region:"bandung", city:"Bandung", officialDomain:"bandung.imigrasi.go.id", fakeDomain:"https://paspor-bandung-cepat.net", score:70, desc:"Tawaran paspor cepat Bandung, tidak resmi"},
+  {region:"bandung", city:"Bandung", officialDomain:"bandung.imigrasi.go.id", fakeDomain:"https://imigrasi-bandung.wordpress.com", score:95, desc:"WordPress gratis mengaku info imigrasi Bandung"},
+  {region:"jakarta", city:"Jakarta", officialDomain:"jakartapusat.imigrasi.go.id", fakeDomain:"https://imigrasi-jakarta.id", score:55, desc:"Domain .id mirip resmi, bukan .go.id"},
+  {region:"jakarta", city:"Jakarta", officialDomain:"jakartapusat.imigrasi.go.id", fakeDomain:"http://imigrasi-jakarta-pusat.com", score:85, desc:"HTTP tanpa enkripsi, mengaku imigrasi Jakarta Pusat"},
+  {region:"jakarta", city:"Jakarta", officialDomain:"soekarnohatta.imigrasi.go.id", fakeDomain:"https://paspor-jakarta-online.xyz", score:100, desc:".xyz + kata kunci paspor Jakarta. Hindari!"},
+  {region:"surabaya", city:"Surabaya", officialDomain:"surabaya.imigrasi.go.id", fakeDomain:"https://imigrasijatim.id", score:55, desc:"Mengklaim layanan imigrasi Jawa Timur, tidak resmi"},
+  {region:"surabaya", city:"Surabaya", officialDomain:"surabaya.imigrasi.go.id", fakeDomain:"http://imigrasi-surabaya.com", score:85, desc:"HTTP + .com menyamar imigrasi Surabaya"},
+  {region:"surabaya", city:"Surabaya", officialDomain:"surabaya.imigrasi.go.id", fakeDomain:"https://paspor-surabaya.wordpress.com", score:95, desc:"WordPress gratis mengaku info paspor Surabaya"},
+  {region:"bali denpasar", city:"Bali / Denpasar", officialDomain:"denpasar.imigrasi.go.id", fakeDomain:"https://visabali-murah.com", score:70, desc:"Tawaran visa murah Bali, tidak resmi"},
+  {region:"bali denpasar", city:"Bali / Denpasar", officialDomain:"ngurahrai.imigrasi.go.id", fakeDomain:"http://imigrasibali.net", score:85, desc:"HTTP + .net mengaku layanan imigrasi Bali"},
+  {region:"bali denpasar", city:"Bali / Denpasar", officialDomain:"denpasar.imigrasi.go.id", fakeDomain:"https://evisa-bali-online.xyz", score:100, desc:".xyz + 'evisa murah Bali'. Potensi scam tinggi"},
+  {region:"yogyakarta jogja", city:"Yogyakarta", officialDomain:"yogyakarta.imigrasi.go.id", fakeDomain:"https://imigrasi-jogja.id", score:55, desc:"Domain .id imigrasi Yogyakarta, tidak resmi"},
+  {region:"yogyakarta jogja", city:"Yogyakarta", officialDomain:"yogyakarta.imigrasi.go.id", fakeDomain:"http://paspor-jogja-murah.blogspot.com", score:100, desc:"Blogspot + HTTP, tawaran paspor murah Jogja"},
+  {region:"makassar sulawesi selatan", city:"Makassar", officialDomain:"makassar.imigrasi.go.id", fakeDomain:"https://imigrasi-makassar.id", score:55, desc:"Domain .id mengklaim imigrasi Makassar"},
+  {region:"medan sumatera utara", city:"Medan", officialDomain:"medan.imigrasi.go.id", fakeDomain:"http://imigrasi-medan.com", score:85, desc:"HTTP + .com mengklaim layanan imigrasi Medan"},
+  {region:"medan sumatera utara", city:"Medan", officialDomain:"medan.imigrasi.go.id", fakeDomain:"https://paspor-medan-cepat.wordpress.com", score:95, desc:"WordPress gratis tawaran paspor cepat Medan"},
+  {region:"batam kepulauan riau", city:"Batam", officialDomain:"batam.imigrasi.go.id", fakeDomain:"https://visa-batam-murah.com", score:70, desc:".com tawaran visa murah Batam, tidak resmi"},
+  {region:"batam kepulauan riau", city:"Batam", officialDomain:"batam.imigrasi.go.id", fakeDomain:"http://imigrasi-batam.net", score:85, desc:"HTTP + .net mengklaim imigrasi Batam"},
+  {region:"imigrasi indonesia", city:"Umum (Nasional)", officialDomain:"imigrasi.go.id", fakeDomain:"http://imigrasi-indonesia.xyz", score:100, desc:"HTTP + .xyz, potensi scam sangat tinggi"},
+  {region:"imigrasi indonesia", city:"Umum (Nasional)", officialDomain:"imigrasi.go.id", fakeDomain:"https://imigrasi-online.com", score:55, desc:"Domain .com nama mirip resmi"},
+  {region:"imigrasi indonesia", city:"Umum (Nasional)", officialDomain:"imigrasi.go.id", fakeDomain:"http://layanan-imigrasi.blogspot.com", score:100, desc:"Blogspot gratis + HTTP. Potensi scam"},
+  {region:"paspor visa", city:"Umum (Paspor/Visa)", officialDomain:"antrian.imigrasi.go.id", fakeDomain:"https://paspor-cepat.net", score:70, desc:"Tawaran paspor cepat dengan biaya tidak resmi"},
+  {region:"visa indonesia", city:"Umum (Visa)", officialDomain:"visa-online.imigrasi.go.id", fakeDomain:"https://visaindonesia-murah.wordpress.com", score:95, desc:"WordPress tawaran visa murah Indonesia"},
+  {region:"paspor", city:"Umum (Paspor)", officialDomain:"antrian.imigrasi.go.id", fakeDomain:"https://online-paspor.id", score:60, desc:"Domain .id, tidak terverifikasi resmi"},
+  {region:"calo paspor imigrasi", city:"Umum (Calo)", officialDomain:"imigrasi.go.id", fakeDomain:"https://jasa-paspor-kilat.com", score:70, desc:"Kemungkinan calo paspor, tidak resmi"},
+  {region:"calo paspor imigrasi", city:"Umum (Calo)", officialDomain:"imigrasi.go.id", fakeDomain:"http://calo-imigrasi-resmi.blogspot.com", score:100, desc:"Jelas bukan resmi. Blogspot + HTTP + kata calo"},
+];
 
-      // Kalimantan
-      { url:"https://balikpapan.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Balikpapan — resmi.", tags:["balikpapan","kalimantan timur","kaltim","imigrasi","resmi"] },
-      { url:"https://pontianak.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Pontianak — resmi.", tags:["pontianak","kalimantan barat","kalbar","imigrasi","resmi"] },
-      { url:"https://banjarmasin.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Banjarmasin — resmi.", tags:["banjarmasin","kalimantan selatan","kalsel","imigrasi","resmi"] },
+// ─── MOCK SITES for search tab ───
+const mockSites = [
+  {url:"https://imigrasi.go.id",score:0,description:"Situs resmi Direktorat Jenderal Imigrasi Indonesia.",tags:["resmi","imigrasi","paspor","visa","pusat","nasional"]},
+  {url:"https://antrian.imigrasi.go.id",score:0,description:"Sistem antrian online resmi pembuatan paspor Ditjen Imigrasi.",tags:["antrian","paspor","online","resmi","booking","jadwal"]},
+  {url:"https://evisa.imigrasi.go.id",score:0,description:"Portal e-Visa resmi Ditjen Imigrasi Indonesia.",tags:["evisa","visa","online","resmi"]},
+  {url:"https://tasikmalaya.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Non TPI Tasikmalaya — situs resmi pemerintah.",tags:["tasikmalaya","tasik","imigrasi","resmi","jawa barat","paspor"]},
+  {url:"https://bandung.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I TPI Bandung — situs resmi pemerintah.",tags:["bandung","jawa barat","imigrasi","resmi","paspor"]},
+  {url:"https://jakarta.imigrasi.go.id",score:0,description:"Portal Kanwil Ditjen Imigrasi DKI Jakarta — resmi.",tags:["jakarta","dki","imigrasi","resmi"]},
+  {url:"https://surabaya.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Surabaya — resmi.",tags:["surabaya","jawa timur","imigrasi","resmi","paspor","sby"]},
+  {url:"https://medan.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Medan — resmi.",tags:["medan","sumatera utara","imigrasi","resmi","paspor"]},
+  {url:"https://batam.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Batam — resmi.",tags:["batam","kepri","imigrasi","resmi"]},
+  {url:"https://denpasar.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I TPI Denpasar Bali — resmi.",tags:["bali","denpasar","imigrasi","resmi","visa bali"]},
+  {url:"https://ngurahrai.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Ngurah Rai Bali — resmi.",tags:["bali","ngurah rai","denpasar","imigrasi","resmi"]},
+  {url:"https://yogyakarta.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I TPI Yogyakarta — resmi.",tags:["yogyakarta","jogja","diy","imigrasi","resmi"]},
+  {url:"https://semarang.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Semarang — resmi.",tags:["semarang","jawa tengah","imigrasi","resmi"]},
+  {url:"https://makassar.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I Khusus TPI Makassar — resmi.",tags:["makassar","sulawesi selatan","imigrasi","resmi"]},
+  {url:"https://malang.imigrasi.go.id",score:0,description:"Kantor Imigrasi Kelas I TPI Malang — resmi.",tags:["malang","jawa timur","imigrasi","resmi"]},
+  // Situs palsu
+  {url:"https://imigrasitasikmalaya.id",score:55,description:"Domain .id menyamar nama Kantor Imigrasi Tasikmalaya, bukan .go.id resmi.",tags:["tasikmalaya","tasik","imigrasi","tidak resmi","mencurigakan"]},
+  {url:"http://kantor-imigrasi-tasikmalaya.com",score:85,description:"HTTP + .com menyamar kantor imigrasi Tasikmalaya. Tidak resmi.",tags:["tasikmalaya","tasik","imigrasi","scam","palsu"]},
+  {url:"http://layanan-paspor-tasikmalaya.blogspot.com",score:100,description:"Blogspot gratis + HTTP, mengaku layanan paspor Tasikmalaya. Sangat berbahaya.",tags:["tasikmalaya","tasik","paspor","blogspot","scam","palsu"]},
+  {url:"https://imigrasibandung.id",score:55,description:"Domain .id nama imigrasi Bandung, bukan subdomain .go.id.",tags:["bandung","imigrasi","paspor","tidak resmi","mencurigakan"]},
+  {url:"http://kantor-imigrasi-bandung.com",score:85,description:"HTTP + .com menyamar kantor imigrasi Bandung.",tags:["bandung","imigrasi","scam","palsu"]},
+  {url:"https://paspor-bandung-cepat.net",score:70,description:"Tawaran paspor cepat Bandung dengan biaya tidak resmi.",tags:["bandung","paspor","cepat","tidak resmi","mencurigakan"]},
+  {url:"https://imigrasi-online.com",score:55,description:"Domain .com mirip resmi, perlu diwaspadai.",tags:["imigrasi","online","mencurigakan"]},
+  {url:"http://layanan-imigrasi.blogspot.com",score:100,description:"HTTP + blogspot gratis. Sangat mencurigakan, kemungkinan scam.",tags:["imigrasi","blogspot","scam","palsu"]},
+  {url:"https://paspor-cepat.net",score:70,description:"Tawaran paspor cepat dengan biaya tidak resmi.",tags:["paspor","cepat","tidak resmi"]},
+  {url:"http://imigrasi-indonesia.xyz",score:100,description:"HTTP + .xyz mencurigakan. Hindari situs ini.",tags:["imigrasi","indonesia","scam","xyz"]},
+  {url:"https://visaindonesia-murah.wordpress.com",score:95,description:"WordPress gratis tawaran visa murah. Potensi penipuan.",tags:["visa","murah","indonesia","wordpress","scam"]},
+  {url:"https://online-paspor.id",score:60,description:"Domain .id tapi bukan .go.id, tidak terverifikasi resmi.",tags:["paspor","online","tidak resmi"]},
+  {url:"https://jasa-paspor-kilat.com",score:70,description:"Jasa paspor kilat — kemungkinan calo paspor.",tags:["paspor","kilat","calo","jasa","tidak resmi"]},
+  {url:"http://calo-imigrasi-resmi.blogspot.com",score:100,description:"Menggunakan kata 'calo' dan blogspot gratis tanpa HTTPS. Berbahaya.",tags:["calo","imigrasi","blogspot","scam"]},
+  {url:"https://imigrasi-jogja.id",score:55,description:"Domain .id imigrasi Yogyakarta, tidak terverifikasi resmi.",tags:["yogyakarta","jogja","imigrasi","mencurigakan"]},
+  {url:"http://paspor-jogja-murah.blogspot.com",score:100,description:"Blogspot + HTTP, tawaran paspor murah di Jogja. Potensi scam.",tags:["yogyakarta","jogja","paspor","murah","blogspot","scam"]},
+  {url:"https://imigrasi-makassar.id",score:55,description:"Domain .id imigrasi Makassar, bukan .go.id resmi.",tags:["makassar","sulawesi","imigrasi","mencurigakan"]},
+  {url:"http://imigrasi-medan.com",score:85,description:"HTTP + .com mengklaim layanan imigrasi Medan.",tags:["medan","sumatera utara","imigrasi","scam"]},
+  {url:"https://visa-batam-murah.com",score:70,description:"Tawaran visa murah Batam melalui domain tidak resmi.",tags:["batam","visa","murah","mencurigakan"]},
+  {url:"http://imigrasi-batam.net",score:85,description:"HTTP + .net mengklaim imigrasi Batam. Bukan resmi.",tags:["batam","imigrasi","scam"]},
+  {url:"https://visabali-murah.com",score:70,description:"Tawaran visa murah Bali melalui domain tidak resmi.",tags:["bali","visa","murah","tidak resmi"]},
+  {url:"https://evisa-bali-online.xyz",score:100,description:".xyz + 'evisa murah Bali'. Sangat mencurigakan.",tags:["bali","evisa","scam","xyz"]},
+  {url:"https://paspor-surabaya.wordpress.com",score:95,description:"WordPress mengaku info paspor Surabaya. Potensi scam.",tags:["surabaya","paspor","wordpress","scam"]},
+];
 
-      // Sulawesi, Bali, NTT, Papua
-      { url:"https://makassar.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Khusus TPI Makassar — resmi.", tags:["makassar","sulawesi selatan","sulsel","imigrasi","resmi"] },
-      { url:"https://manado.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Manado — resmi.", tags:["manado","sulawesi utara","sulut","imigrasi","resmi"] },
-      { url:"https://denpasar.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I Khusus TPI Ngurah Rai Bali — resmi.", tags:["bali","denpasar","ngurah rai","imigrasi","resmi","visa bali"] },
-      { url:"https://mataram.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Mataram — resmi.", tags:["mataram","ntb","lombok","imigrasi","resmi"] },
-      { url:"https://jayapura.imigrasi.go.id", score:0, description:"Kantor Imigrasi Kelas I TPI Jayapura — resmi.", tags:["jayapura","papua","imigrasi","resmi"] },
+// Init DB count
+document.getElementById('dbCount').textContent = officialDomains.length + mockSites.filter(s=>s.score>0).length;
 
-      // ── SITUS MENCURIGAKAN / TIDAK RESMI ──
-      // Tasikmalaya (sesuai permintaan user)
-      { url:"https://imigrasitasikmalaya.id", score:55, description:"Domain .id dengan nama persis seperti kantor imigrasi Tasikmalaya, tapi BUKAN subdomain .go.id. Tidak terverifikasi resmi.", tags:["tasikmalaya","tasik","imigrasi","paspor","tidak resmi","mencurigakan"] },
-      { url:"http://kantor-imigrasi-tasikmalaya.com", score:85, description:"HTTP tanpa enkripsi, domain .com menyamar sebagai kantor imigrasi Tasikmalaya.", tags:["tasikmalaya","tasik","imigrasi","scam","palsu","tidak resmi"] },
-      { url:"https://imigrasitasik.net", score:70, description:"Domain .net memakai nama kependekan Tasikmalaya, bukan situs resmi pemerintah.", tags:["tasikmalaya","tasik","imigrasi","mencurigakan","tidak resmi"] },
-      { url:"http://layanan-paspor-tasikmalaya.blogspot.com", score:100, description:"Blogspot gratis + HTTP, mengaku layanan paspor Tasikmalaya. Sangat berbahaya, potensi scam.", tags:["tasikmalaya","tasik","paspor","blogspot","scam","palsu"] },
+// ─── RISK SCORING ───
+function calculateRiskScore(url) {
+  let s=0; const l=url.toLowerCase();
+  if (!l.startsWith('https://')) s+=40;
+  let d=l.replace(/^https?:\/\//,'').split('/')[0];
+  if (!d.endsWith('.go.id')) s+=30;
+  if (!d.endsWith('.go.id') && ['imigrasi','paspor','visa'].some(k=>l.includes(k))) s+=15;
+  if (['blogspot','wordpress','wix','weebly'].some(h=>d.includes(h))) s+=15;
+  if (['.xyz','.top','.click','.online','.site'].some(t=>d.endsWith(t))) s+=10;
+  return Math.min(s,100);
+}
+function buildChecklist(url) {
+  const l=url.toLowerCase(); let d=l.replace(/^https?:\/\//,'').split('/')[0];
+  return {
+    https: l.startsWith('https://'),
+    govDomain: d.endsWith('.go.id'),
+    notFreeHosting: !['blogspot','wordpress','wix','weebly'].some(h=>d.includes(h)),
+    notAskingPayment: !['rekening','transfer','bayar','pembayaran','murah','biaya','cepat','kilat'].some(k=>l.includes(k)),
+  };
+}
+function getBadge(score,url){
+  const d=url.toLowerCase().replace(/^https?:\/\//,'').split('/')[0];
+  if(d.endsWith('.go.id')) return {label:'RESMI',color:'green',emoji:'✅'};
+  if(score>60) return {label:'POTENSI SCAM',color:'red',emoji:'❌'};
+  return {label:'MENCURIGAKAN',color:'amber',emoji:'⚠️'};
+}
+function getRiskLevel(score){
+  if(score<=30) return {label:'Aman',color:'green',barColor:'bg-green-500'};
+  if(score<=60) return {label:'Waspadai',color:'amber',barColor:'bg-amber-500'};
+  return {label:'Hindari',color:'red',barColor:'bg-red-500'};
+}
 
-      // Bandung palsu
-      { url:"https://imigrasibandung.id", score:55, description:"Domain .id dengan nama persis kantor imigrasi Bandung, tapi bukan subdomain .go.id.", tags:["bandung","imigrasi","paspor","tidak resmi","mencurigakan"] },
-      { url:"http://kantor-imigrasi-bandung.com", score:85, description:"HTTP tanpa HTTPS, domain .com menyamar sebagai kantor imigrasi Bandung.", tags:["bandung","imigrasi","scam","palsu","tidak resmi"] },
-      { url:"https://paspor-bandung-cepat.net", score:70, description:"Menawarkan paspor cepat di Bandung dengan biaya di luar tarif resmi.", tags:["bandung","paspor","cepat","tidak resmi","mencurigakan","biaya"] },
-      { url:"https://imigrasi-bandung.wordpress.com", score:95, description:"WordPress gratis mengaku info imigrasi Bandung. Potensi scam tinggi.", tags:["bandung","imigrasi","wordpress","scam","palsu"] },
+// ─── CONNECTIVITY CHECK (using Image trick for CORS-safe ping) ───
+const connectivityCache = {};
+function checkConnectivity(url, callback) {
+  if (connectivityCache[url] !== undefined) { callback(connectivityCache[url]); return; }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+  fetch(url, { method:'HEAD', mode:'no-cors', signal: controller.signal })
+    .then(() => { clearTimeout(timeout); connectivityCache[url]='online'; callback('online'); })
+    .catch(err => {
+      clearTimeout(timeout);
+      const status = err.name==='AbortError' ? 'timeout' : 'offline';
+      connectivityCache[url] = status;
+      callback(status);
+    });
+}
+function statusBadgeHTML(status) {
+  if (status==='checking') return `<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 animate-pulse">⏳ Memeriksa...</span>`;
+  if (status==='online')   return `<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">🟢 Dapat Diakses</span>`;
+  if (status==='timeout')  return `<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">⏱️ Timeout</span>`;
+  return `<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">🔴 Tidak Dapat Diakses</span>`;
+}
 
-      // Jakarta palsu
-      { url:"https://imigrasi-jakarta.id", score:55, description:"Domain .id mirip resmi, tapi bukan subdomain .go.id. Waspadai.", tags:["jakarta","imigrasi","tidak resmi","mencurigakan"] },
-      { url:"http://imigrasi-jakarta-pusat.com", score:85, description:"HTTP tanpa enkripsi, mengaku layanan imigrasi Jakarta Pusat.", tags:["jakarta","jakarta pusat","imigrasi","scam","tidak resmi"] },
-      { url:"https://paspor-jakarta-online.xyz", score:100, description:"HTTP + domain .xyz, tawaran paspor online di Jakarta. Hindari!", tags:["jakarta","paspor","online","scam","palsu","xyz"] },
+// ─── SEARCH FUNCTION ───
+let currentQuery = '';
+function doSearch(forceQuery) {
+  const input = document.getElementById('searchInput');
+  const query = (forceQuery || input.value).trim().toLowerCase();
+  if (!query) return;
+  currentQuery = query; input.value = query;
+  const sec=document.getElementById('resultsSection');
+  const ls=document.getElementById('loadingState');
+  const rc=document.getElementById('resultsContainer');
+  sec.classList.remove('hidden'); ls.classList.remove('hidden'); ls.classList.add('flex'); rc.classList.add('hidden');
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>{
+    ls.classList.add('hidden'); ls.classList.remove('flex'); rc.classList.remove('hidden');
+    const tokens = query.split(/\s+/).filter(Boolean);
+    const results = mockSites.filter(site => {
+      const hay = [site.url.toLowerCase(), site.description.toLowerCase(), ...(site.tags||[])].join(' ');
+      return tokens.every(t => hay.includes(t));
+    });
+    results.sort((a,b)=>{
+      const aO=a.url.includes('.go.id'), bO=b.url.includes('.go.id');
+      if(aO&&!bO) return -1; if(!aO&&bO) return 1; return b.score-a.score;
+    });
+    renderResults(results, query);
+  }, 800);
+}
+function setChip(kw){ document.getElementById('searchInput').value=kw; doSearch(); }
 
-      // Surabaya palsu
-      { url:"https://imigrasijatim.id", score:55, description:"Mengklaim layanan imigrasi Jawa Timur, domain .id tidak terverifikasi resmi.", tags:["surabaya","jawa timur","jatim","imigrasi","mencurigakan"] },
-      { url:"http://imigrasi-surabaya.com", score:85, description:"HTTP + domain .com menyamar sebagai kantor imigrasi Surabaya.", tags:["surabaya","jawa timur","imigrasi","scam","tidak resmi"] },
-      { url:"https://paspor-surabaya.wordpress.com", score:95, description:"WordPress gratis mengaku info paspor Surabaya.", tags:["surabaya","paspor","wordpress","scam","palsu"] },
+// ─── RENDER RESULTS ───
+function highlight(text, query) {
+  if (!query) return text;
+  const tokens = query.split(/\s+/).filter(Boolean);
+  let r = text;
+  tokens.forEach(t => { const re=new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'); r=r.replace(re,'<mark>$1</mark>'); });
+  return r;
+}
+function renderResults(results, query) {
+  document.getElementById('searchQueryLabel').textContent = query;
+  const cardList=document.getElementById('cardList'), noR=document.getElementById('noResults');
+  let a=0,w=0,sc=0;
+  results.forEach(s=>{ if(s.score<=30) a++; else if(s.score<=60) w++; else sc++; });
+  document.getElementById('statAman').textContent=a;
+  document.getElementById('statWaspadai').textContent=w;
+  document.getElementById('statScam').textContent=sc;
+  document.getElementById('resultCount').textContent=`${results.length} situs ditemukan`;
+  cardList.innerHTML='';
+  if(results.length===0){noR.classList.remove('hidden');return;} noR.classList.add('hidden');
+  results.forEach((site,idx)=>{
+    const card=buildCard(site,idx,query);
+    cardList.appendChild(card);
+    setTimeout(()=>{ card.style.animationDelay=`${idx*70}ms`; card.classList.add('result-card'); },10);
+  });
+}
 
-      // Bali palsu
-      { url:"https://visabali-murah.com", score:70, description:"Menawarkan visa murah untuk Bali melalui domain tidak resmi.", tags:["bali","visa","murah","tidak resmi","mencurigakan","denpasar"] },
-      { url:"http://imigrasibali.net", score:85, description:"HTTP, domain .net mengaku layanan imigrasi Bali.", tags:["bali","denpasar","imigrasi","scam","tidak resmi"] },
-      { url:"https://evisa-bali-online.xyz", score:100, description:".xyz + kata 'evisa murah Bali'. Sangat mencurigakan, potensi scam.", tags:["bali","evisa","scam","palsu","xyz"] },
-
-      // Situs palsu generic
-      { url:"https://imigrasi-online.com", score:55, description:"Domain .com dengan nama mirip resmi, perlu diwaspadai.", tags:["imigrasi","online","mencurigakan","tidak resmi"] },
-      { url:"http://layanan-imigrasi.blogspot.com", score:100, description:"HTTP + blogspot gratis. Sangat mencurigakan, kemungkinan scam.", tags:["imigrasi","blogspot","scam","palsu","gratis"] },
-      { url:"https://paspor-cepat.net", score:70, description:"Menawarkan paspor cepat dengan biaya tidak resmi.", tags:["paspor","cepat","mencurigakan","tidak resmi","biaya"] },
-      { url:"http://imigrasi-indonesia.xyz", score:100, description:"HTTP + domain .xyz mencurigakan. Hindari situs ini.", tags:["imigrasi","indonesia","scam","xyz","palsu"] },
-      { url:"https://visaindonesia-murah.wordpress.com", score:95, description:"WordPress gratis dengan tawaran visa murah. Potensi penipuan.", tags:["visa","murah","indonesia","wordpress","scam","palsu"] },
-      { url:"https://online-paspor.id", score:60, description:"Domain .id tapi bukan .go.id, tidak terverifikasi resmi.", tags:["paspor","online","tidak resmi","mencurigakan"] },
-      { url:"https://jasa-paspor-kilat.com", score:70, description:"Menawarkan jasa paspor kilat — kemungkinan calo paspor.", tags:["paspor","kilat","calo","jasa","tidak resmi","mencurigakan"] },
-      { url:"http://calo-imigrasi-resmi.blogspot.com", score:100, description:"Jelas bukan resmi. Menggunakan kata 'calo' dan blogspot gratis tanpa HTTPS.", tags:["calo","imigrasi","blogspot","scam","palsu"] },
-      { url:"https://bikin-paspor-mudah.site", score:90, description:"TLD .site + kata kunci tidak resmi. Waspadai penipuan.", tags:["paspor","mudah","site","scam","tidak resmi"] },
-      { url:"https://layanan-visa-murah.top", score:90, description:"TLD .top mencurigakan, tawaran visa murah tidak terverifikasi.", tags:["visa","murah","top","scam","tidak resmi"] },
-      { url:"http://imigrasi-express.wix.com", score:100, description:"Wix gratis + HTTP, mengaku layanan imigrasi cepat. Sangat berbahaya.", tags:["imigrasi","express","wix","scam","palsu","cepat"] },
-      { url:"https://pembuatan-paspor.id", score:60, description:"Domain .id tidak resmi, mengklaim jasa pembuatan paspor.", tags:["paspor","pembuatan","id","tidak resmi","mencurigakan"] },
-      { url:"https://passport-indonesia-service.com", score:70, description:"Domain .com berbahasa Inggris mengklaim layanan paspor Indonesia.", tags:["paspor","passport","service","indonesia","mencurigakan","tidak resmi"] },
-      { url:"http://paspor-online-murah.xyz", score:100, description:"HTTP + .xyz + kata kunci 'murah'. Tanda-tanda scam yang jelas.", tags:["paspor","online","murah","xyz","scam","palsu"] },
-      { url:"https://info-imigrasi-terbaru.wordpress.com", score:80, description:"WordPress gratis berisi info imigrasi palsu, sering menyebarkan disinformasi.", tags:["imigrasi","info","wordpress","mencurigakan","palsu","tidak resmi"] },
-      { url:"https://daftar-paspor-online.net", score:70, description:"Domain .net, tidak ada afiliasi resmi dengan pemerintah.", tags:["paspor","daftar","online","tidak resmi","mencurigakan"] },
-      { url:"http://imigrasiku.co.id", score:75, description:"HTTP tanpa HTTPS, .co.id bukan .go.id, menyamar layanan imigrasi.", tags:["imigrasi","co.id","tidak resmi","mencurigakan","scam"] },
-      { url:"https://kanim-jakarta-utara.com", score:70, description:"Domain .com mengklaim kanim Jakarta Utara, tapi bukan .go.id resmi.", tags:["jakarta","jakarta utara","imigrasi","kanim","mencurigakan","tidak resmi"] },
-
-      // Yogyakarta palsu
-      { url:"https://imigrasi-jogja.id", score:55, description:"Domain .id dengan nama imigrasi Yogyakarta, tidak terverifikasi resmi.", tags:["yogyakarta","jogja","imigrasi","mencurigakan","tidak resmi"] },
-      { url:"http://paspor-jogja-murah.blogspot.com", score:100, description:"Blogspot gratis + HTTP, tawaran paspor murah di Jogja. Potensi scam.", tags:["yogyakarta","jogja","paspor","murah","blogspot","scam"] },
-
-      // Makassar palsu
-      { url:"https://imigrasi-makassar.id", score:55, description:"Domain .id mengklaim imigrasi Makassar, bukan domain resmi .go.id.", tags:["makassar","sulawesi","imigrasi","mencurigakan","tidak resmi"] },
-
-      // Medan palsu
-      { url:"http://imigrasi-medan.com", score:85, description:"HTTP + .com mengklaim layanan imigrasi Medan. Tidak resmi.", tags:["medan","sumatera utara","imigrasi","scam","tidak resmi"] },
-      { url:"https://paspor-medan-cepat.wordpress.com", score:95, description:"WordPress gratis tawaran paspor cepat Medan. Potensi penipuan.", tags:["medan","paspor","cepat","wordpress","scam","palsu"] },
-
-      // Batam palsu
-      { url:"https://visa-batam-murah.com", score:70, description:"Domain .com tawaran visa murah Batam, tidak resmi.", tags:["batam","visa","murah","mencurigakan","tidak resmi"] },
-      { url:"http://imigrasi-batam.net", score:85, description:"HTTP + .net mengklaim imigrasi Batam. Bukan resmi.", tags:["batam","imigrasi","scam","tidak resmi"] },
-    ];
-
-    // ─────────────────────────────────────────────
-    // INIT: tampilkan jumlah database
-    // ─────────────────────────────────────────────
-    document.getElementById('dbCount').textContent = mockSites.length;
-
-    // ─────────────────────────────────────────────
-    // RISK SCORING ENGINE
-    // ─────────────────────────────────────────────
-    function calculateRiskScore(url) {
-      let score = 0;
-      const lower = url.toLowerCase();
-      if (!lower.startsWith('https://')) score += 40;
-      let domain = lower.replace(/^https?:\/\//, '').split('/')[0];
-      if (!domain.endsWith('.go.id')) score += 30;
-      const imigKw = ['imigrasi','paspor','visa','kanim','kantor imigrasi'];
-      if (!domain.endsWith('.go.id') && imigKw.some(kw => lower.includes(kw))) score += 15;
-      const freeHosting = ['blogspot','wordpress','wix','weebly'];
-      if (freeHosting.some(h => domain.includes(h))) score += 15;
-      const suspTlds = ['.xyz','.top','.click','.online','.site'];
-      if (suspTlds.some(tld => domain.endsWith(tld))) score += 10;
-      return Math.min(score, 100);
-    }
-
-    function buildChecklist(url) {
-      const lower = url.toLowerCase();
-      let domain = lower.replace(/^https?:\/\//, '').split('/')[0];
-      const freeHosting = ['blogspot','wordpress','wix','weebly'];
-      const suspKw = ['rekening','transfer','bayar','pembayaran','murah','biaya','cepat','kilat','jasa'];
-      return {
-        https: lower.startsWith('https://'),
-        govDomain: domain.endsWith('.go.id'),
-        notFreeHosting: !freeHosting.some(h => domain.includes(h)),
-        notAskingPayment: !suspKw.some(kw => lower.includes(kw)),
-      };
-    }
-
-    function getBadge(score, url) {
-      const domain = url.toLowerCase().replace(/^https?:\/\//, '').split('/')[0];
-      if (domain.endsWith('.go.id')) return { label:'RESMI', color:'green', emoji:'✅' };
-      if (score > 60) return { label:'POTENSI SCAM', color:'red', emoji:'❌' };
-      return { label:'MENCURIGAKAN', color:'amber', emoji:'⚠️' };
-    }
-
-    function getRiskLevel(score) {
-      if (score <= 30) return { label:'Aman', color:'green', barColor:'bg-green-500' };
-      if (score <= 60) return { label:'Waspadai', color:'amber', barColor:'bg-amber-500' };
-      return { label:'Hindari', color:'red', barColor:'bg-red-500' };
-    }
-
-    // ─────────────────────────────────────────────
-    // SEARCH — match URL, description, AND tags
-    // ─────────────────────────────────────────────
-    let currentQuery = '';
-
-    function doSearch(forceQuery) {
-      const input = document.getElementById('searchInput');
-      const query = (forceQuery || input.value).trim().toLowerCase();
-      if (!query) return;
-      currentQuery = query;
-      input.value = query;
-
-      const resultsSection = document.getElementById('resultsSection');
-      const loadingState   = document.getElementById('loadingState');
-      const resultsContainer = document.getElementById('resultsContainer');
-
-      resultsSection.classList.remove('hidden');
-      loadingState.classList.remove('hidden');
-      loadingState.classList.add('flex');
-      resultsContainer.classList.add('hidden');
-      resultsSection.scrollIntoView({ behavior:'smooth', block:'start' });
-
-      setTimeout(() => {
-        loadingState.classList.add('hidden');
-        loadingState.classList.remove('flex');
-        resultsContainer.classList.remove('hidden');
-
-        // Multi-field fuzzy filter
-        const tokens = query.split(/\s+/).filter(Boolean);
-        const results = mockSites.filter(site => {
-          const haystack = [
-            site.url.toLowerCase(),
-            site.description.toLowerCase(),
-            ...(site.tags || [])
-          ].join(' ');
-          return tokens.every(tok => haystack.includes(tok));
-        });
-
-        // Sort: official first, then by score desc
-        results.sort((a, b) => {
-          const aOfficial = a.url.includes('.go.id');
-          const bOfficial = b.url.includes('.go.id');
-          if (aOfficial && !bOfficial) return -1;
-          if (!aOfficial && bOfficial) return 1;
-          return b.score - a.score;
-        });
-
-        renderResults(results, query);
-      }, 800);
-    }
-
-    // ─────────────────────────────────────────────
-    // RENDER RESULTS
-    // ─────────────────────────────────────────────
-    function renderResults(results, query) {
-      document.getElementById('searchQueryLabel').textContent = query;
-      const cardList   = document.getElementById('cardList');
-      const noResults  = document.getElementById('noResults');
-
-      let aman = 0, waspadai = 0, scam = 0;
-      results.forEach(s => {
-        if (s.score <= 30) aman++;
-        else if (s.score <= 60) waspadai++;
-        else scam++;
-      });
-
-      document.getElementById('statAman').textContent     = aman;
-      document.getElementById('statWaspadai').textContent = waspadai;
-      document.getElementById('statScam').textContent     = scam;
-      document.getElementById('resultCount').textContent  = `${results.length} situs ditemukan`;
-
-      cardList.innerHTML = '';
-      if (results.length === 0) { noResults.classList.remove('hidden'); return; }
-      noResults.classList.add('hidden');
-
-      results.forEach((site, idx) => {
-        const card = buildCard(site, idx, query);
-        cardList.appendChild(card);
-        setTimeout(() => {
-          card.style.animationDelay = `${idx * 70}ms`;
-          card.classList.add('result-card');
-        }, 10);
-      });
-    }
-
-    // ─────────────────────────────────────────────
-    // HIGHLIGHT SEARCH TERM IN TEXT
-    // ─────────────────────────────────────────────
-    function highlight(text, query) {
-      if (!query) return text;
-      const tokens = query.split(/\s+/).filter(Boolean);
-      let result = text;
-      tokens.forEach(tok => {
-        const re = new RegExp(`(${tok.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
-        result = result.replace(re, '<mark>$1</mark>');
-      });
-      return result;
-    }
-
-    // ─────────────────────────────────────────────
-    // BUILD RESULT CARD
-    // ─────────────────────────────────────────────
-    function buildCard(site, idx, query) {
-      const badge     = getBadge(site.score, site.url);
-      const risk      = getRiskLevel(site.score);
-      const checklist = buildChecklist(site.url);
-      const domain    = site.url.replace(/^https?:\/\//, '').split('/')[0];
-
-      const badgeCls = {
-        green: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
-        amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-        red:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
-      };
-      const riskCls = {
-        green: 'text-green-600 dark:text-green-400',
-        amber: 'text-amber-600 dark:text-amber-400',
-        red:   'text-red-600 dark:text-red-400',
-      };
-      const borderCls = {
-        green: 'border-l-green-400',
-        amber: 'border-l-amber-400',
-        red:   'border-l-red-500',
-      };
-
-      const isSuspicious = site.score > 30;
-      // Escape URL for use in onclick attribute
-      const safeUrl = site.url.replace(/'/g, "\\'");
-
-      const card = document.createElement('div');
-      card.className = `glass-card border border-gray-100 dark:border-gray-700 border-l-4 ${borderCls[badge.color]} rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow`;
-      card.style.opacity = '0';
-
-      card.innerHTML = `
-        <div class="flex items-start justify-between gap-3 mb-3">
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap mb-1">
-              <span class="text-base font-bold text-gray-900 dark:text-white">${highlight(domain, query)}</span>
-              <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${badgeCls[badge.color]} ${badge.color === 'red' ? 'badge-scam' : ''}">
-                ${badge.emoji} ${badge.label}
-              </span>
-            </div>
-            <!-- Clickable URL -->
-            <a href="${site.url}" target="_blank" rel="noopener noreferrer"
-               class="url-link text-xs text-blue-600 dark:text-blue-400 break-all hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex items-center gap-1 group">
-              <svg class="w-3 h-3 flex-shrink-0 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-              </svg>
-              ${highlight(site.url, query)}
-            </a>
-          </div>
-          <div class="flex-shrink-0 text-right">
-            <div class="text-2xl font-extrabold ${riskCls[risk.color]}">${site.score}</div>
-            <div class="text-[10px] font-medium text-gray-400 uppercase">/ 100</div>
-          </div>
+// ─── BUILD CARD ───
+function buildCard(site,idx,query){
+  const badge=getBadge(site.score,site.url), risk=getRiskLevel(site.score), cl=buildChecklist(site.url);
+  const domain=site.url.replace(/^https?:\/\//,'').split('/')[0];
+  const bCls={green:'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',amber:'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',red:'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800'};
+  const rCls={green:'text-green-600 dark:text-green-400',amber:'text-amber-600 dark:text-amber-400',red:'text-red-600 dark:text-red-400'};
+  const bordCls={green:'border-l-green-400',amber:'border-l-amber-400',red:'border-l-red-500'};
+  const safeUrl=site.url.replace(/'/g,"\\'");
+  const card=document.createElement('div');
+  card.className=`glass-card border border-gray-100 dark:border-gray-700 border-l-4 ${bordCls[badge.color]} rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow`;
+  card.style.opacity='0';
+  const connId=`conn-${idx}-${Date.now()}`;
+  card.innerHTML=`
+    <div class="flex items-start justify-between gap-3 mb-3">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+          <span class="text-base font-bold text-gray-900 dark:text-white">${highlight(domain,query)}</span>
+          <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${bCls[badge.color]} ${badge.color==='red'?'badge-scam':''}">${badge.emoji} ${badge.label}</span>
+          <span id="${connId}">${statusBadgeHTML('checking')}</span>
         </div>
+        <a href="${site.url}" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-600 dark:text-blue-400 break-all hover:underline flex items-center gap-1 group">
+          <svg class="w-3 h-3 flex-shrink-0 opacity-60 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          ${highlight(site.url,query)}
+        </a>
+      </div>
+      <div class="flex-shrink-0 text-right">
+        <div class="text-2xl font-extrabold ${rCls[risk.color]}">${site.score}</div>
+        <div class="text-[10px] font-medium text-gray-400 uppercase">/ 100</div>
+      </div>
+    </div>
+    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">${highlight(site.description,query)}</p>
+    <div class="mb-4">
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Tingkat Risiko</span>
+        <span class="text-xs font-bold ${rCls[risk.color]}">${risk.label}</span>
+      </div>
+      <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+        <div class="h-full ${risk.barColor} risk-bar-fill rounded-full" style="width:0%" data-width="${site.score}%"></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-1.5 mb-4">
+      ${buildCL(cl.https,'Menggunakan HTTPS')}${buildCL(cl.govDomain,'Domain resmi .go.id')}
+      ${buildCL(cl.notFreeHosting,'Bukan hosting gratis')}${buildCL(cl.notAskingPayment,'Tidak ada kata berbayar')}
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button onclick="copyUrl('${safeUrl}',this)" class="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-xl transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Salin URL
+      </button>
+      ${site.score>30?`<button onclick="openReportModal('${safeUrl}',${site.score})" class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl transition-all shadow-sm"><svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>Laporkan ke Komdigi</button>`:`<span class="inline-flex items-center gap-1.5 text-xs font-medium bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 px-3 py-2 rounded-xl">✅ Situs Aman</span>`}
+    </div>`;
+  setTimeout(()=>{const bar=card.querySelector('.risk-bar-fill');if(bar)bar.style.width=bar.dataset.width;},250+idx*70);
+  // Check connectivity
+  checkConnectivity(site.url, status => {
+    const el = document.getElementById(connId);
+    if (el) el.innerHTML = statusBadgeHTML(status);
+  });
+  return card;
+}
+function buildCL(ok,label){return ok?`<div class="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400"><svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg><span>${label}</span></div>`:`<div class="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400"><svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-9.293a1 1 0 00-1.414-1.414L10 8.586 6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293z" clip-rule="evenodd"/></svg><span>${label}</span></div>`;}
 
-        <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">${highlight(site.description, query)}</p>
+// ─── MANUAL CHECKER ───
+function toggleManualChecker(){const p=document.getElementById('manualCheckerPanel');p.classList.toggle('hidden');if(!p.classList.contains('hidden'))document.getElementById('manualUrlInput').focus();}
+function clearManualUrl(){document.getElementById('manualUrlInput').value='';const r=document.getElementById('manualResult');r.innerHTML='';r.classList.add('hidden');}
+function analyzeManualUrl(){
+  const input=document.getElementById('manualUrlInput').value.trim();
+  const resultEl=document.getElementById('manualResult');
+  if(!input||input.length<4){resultEl.classList.add('hidden');return;}
+  let url=input; if(!url.startsWith('http://') && !url.startsWith('https://')) url='https://'+url;
+  const score=calculateRiskScore(url), badge=getBadge(score,url), risk=getRiskLevel(score), cl=buildChecklist(url);
+  const bCls={green:'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',amber:'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',red:'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800'};
+  const rCls={green:'text-green-600 dark:text-green-400',amber:'text-amber-600 dark:text-amber-400',red:'text-red-600 dark:text-red-400'};
+  resultEl.classList.remove('hidden');
+  const connId='manual-conn-'+Date.now();
+  resultEl.innerHTML=`<div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 space-y-3">
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${bCls[badge.color]}">${badge.emoji} ${badge.label}</span>
+      <div class="flex items-center gap-2"><span id="${connId}">${statusBadgeHTML('checking')}</span><span class="text-xl font-extrabold ${rCls[risk.color]}">${score}<span class="text-xs font-medium"> / 100</span></span></div>
+    </div>
+    <div><div class="flex items-center justify-between mb-1"><span class="text-xs text-gray-500 dark:text-gray-400">Tingkat Risiko</span><span class="text-xs font-bold ${rCls[risk.color]}">${risk.label}</span></div>
+    <div class="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"><div class="h-full ${risk.barColor} risk-bar-fill" style="width:0%" data-width="${score}%"></div></div></div>
+    <div class="grid grid-cols-2 gap-1">${buildCL(cl.https,'Menggunakan HTTPS')}${buildCL(cl.govDomain,'Domain resmi .go.id')}${buildCL(cl.notFreeHosting,'Bukan hosting gratis')}${buildCL(cl.notAskingPayment,'Tidak ada kata berbayar')}</div>
+    ${score>30?`<button onclick="openReportModal('${url.replace(/'/g,"\\'")}',${score})" class="flex items-center justify-center gap-1.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-2.5 rounded-xl transition-all w-full">⚠️ Laporkan ke Komdigi</button>`:''}
+  </div>`;
+  setTimeout(()=>{const bar=resultEl.querySelector('.risk-bar-fill');if(bar)bar.style.width=bar.dataset.width;},100);
+  checkConnectivity(url, s=>{ const el=document.getElementById(connId); if(el) el.innerHTML=statusBadgeHTML(s); });
+}
 
-        <!-- Risk Bar -->
-        <div class="mb-4">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Tingkat Risiko</span>
-            <span class="text-xs font-bold ${riskCls[risk.color]}">${risk.label}</span>
-          </div>
-          <div class="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-            <div class="h-full ${risk.barColor} risk-bar-fill rounded-full" style="width:0%" data-width="${site.score}%"></div>
-          </div>
+// ─── RENDER RESMI TABLE ───
+let resmiRendered = false;
+function renderResmiTable() {
+  if (resmiRendered) return; resmiRendered = true;
+  const tbody = document.getElementById('resmiTableBody');
+  tbody.innerHTML = '';
+  officialDomains.forEach((d, i) => {
+    const isKanwil = d.nama.startsWith('KANWIL');
+    const url = `https://${d.domain}`;
+    const connId = `resmi-conn-${i}`;
+    const tr = document.createElement('tr');
+    tr.className = `compare-row border-b border-gray-100 dark:border-gray-700/60 ${isKanwil ? 'bg-red-50/30 dark:bg-red-900/10' : ''}`;
+    tr.setAttribute('data-search', (d.nama + ' ' + d.domain + ' ' + d.region).toLowerCase());
+    tr.innerHTML = `
+      <td class="px-4 py-2.5 text-xs text-gray-400 dark:text-gray-500">${d.no}</td>
+      <td class="px-4 py-2.5 text-sm ${isKanwil?'font-bold text-gray-900 dark:text-white':'text-gray-700 dark:text-gray-300'}">${d.nama}</td>
+      <td class="px-4 py-2.5">
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 group">
+          <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          ${d.domain}
+        </a>
+      </td>
+      <td class="px-4 py-2.5"><span id="${connId}">${statusBadgeHTML('checking')}</span></td>`;
+    tbody.appendChild(tr);
+    // Stagger connectivity checks to avoid rate limiting
+    setTimeout(() => checkConnectivity(url, s => { const el=document.getElementById(connId); if(el) el.innerHTML=statusBadgeHTML(s); }), i * 100);
+  });
+}
+function filterResmiTable() {
+  const q = document.getElementById('resmiSearchInput').value.toLowerCase();
+  document.querySelectorAll('#resmiTableBody tr').forEach(tr => {
+    const hay = tr.getAttribute('data-search') || '';
+    tr.style.display = hay.includes(q) ? '' : 'none';
+  });
+}
+
+// ─── RENDER COMPARE TABLE ───
+let compareRendered = false;
+function renderCompareTable() {
+  if (compareRendered) return; compareRendered = true;
+  const tbody = document.getElementById('compareTableBody');
+  tbody.innerHTML = '';
+  fakeDomains.forEach((row, i) => {
+    const risk = getRiskLevel(row.score);
+    const rCls = {green:'text-green-600',amber:'text-amber-600',red:'text-red-600'};
+    const dotCls = {green:'bg-green-500',amber:'bg-amber-500',red:'bg-red-500'};
+    const safeUrl = row.fakeDomain.replace(/'/g,"\\'");
+    const connId = `cmp-conn-${i}`;
+    const tr = document.createElement('tr');
+    tr.className = 'compare-row border-b border-gray-100 dark:border-gray-700/60';
+    tr.setAttribute('data-search', (row.city + ' ' + row.region + ' ' + row.officialDomain + ' ' + row.fakeDomain).toLowerCase());
+    tr.innerHTML = `
+      <td class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">${row.city}</td>
+      <td class="px-4 py-3">
+        <a href="https://${row.officialDomain}" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-green-700 dark:text-green-400 hover:underline flex items-center gap-1 group">
+          <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          ${row.officialDomain}
+        </a>
+        <div class="text-[10px] text-green-600 dark:text-green-500 mt-0.5">✅ Resmi .go.id</div>
+      </td>
+      <td class="px-4 py-3">
+        <a href="${row.fakeDomain}" target="_blank" rel="noopener noreferrer" class="text-xs font-mono text-red-600 dark:text-red-400 hover:underline flex items-center gap-1 group break-all">
+          <svg class="w-3 h-3 opacity-50 group-hover:opacity-100 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          ${row.fakeDomain}
+        </a>
+        <div class="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">${row.desc}</div>
+        <div class="mt-1" id="${connId}">${statusBadgeHTML('checking')}</div>
+      </td>
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full ${dotCls[risk.color]} flex-shrink-0"></span>
+          <span class="text-sm font-bold ${rCls[risk.color]}">${row.score}</span>
         </div>
+        <div class="text-[10px] text-gray-400 mt-0.5">${risk.label}</div>
+      </td>
+      <td class="px-4 py-3 text-center">
+        <button onclick="openReportModal('${safeUrl}',${row.score})" class="text-xs font-bold bg-red-600 hover:bg-red-700 text-white px-2.5 py-1.5 rounded-lg transition-all whitespace-nowrap">Laporkan</button>
+      </td>`;
+    tbody.appendChild(tr);
+    setTimeout(() => checkConnectivity(row.fakeDomain, s => { const el=document.getElementById(connId); if(el) el.innerHTML=statusBadgeHTML(s); }), i * 150);
+  });
+}
+function filterCompareTable() {
+  const q = document.getElementById('compareSearchInput').value.toLowerCase();
+  document.querySelectorAll('#compareTableBody tr').forEach(tr => {
+    const hay = tr.getAttribute('data-search') || '';
+    tr.style.display = hay.includes(q) ? '' : 'none';
+  });
+}
 
-        <!-- Checklist -->
-        <div class="grid grid-cols-2 gap-1.5 mb-4">
-          ${buildChecklistItem(checklist.https,            'Menggunakan HTTPS')}
-          ${buildChecklistItem(checklist.govDomain,        'Domain resmi .go.id')}
-          ${buildChecklistItem(checklist.notFreeHosting,   'Bukan hosting gratis')}
-          ${buildChecklistItem(checklist.notAskingPayment, 'Tidak ada kata berbayar')}
-        </div>
+// ─── REPORT MODAL ───
+let reportTargetUrl = '';
+function openReportModal(url, score) {
+  reportTargetUrl = url;
+  document.getElementById('reportUrlDisplay').textContent = url;
+  document.getElementById('reportScoreVal').textContent = `Skor ${score} / 100 — ${getRiskLevel(score).label}`;
+  document.querySelectorAll('input[name="reportReason"]').forEach(r=>r.checked=false);
+  document.getElementById('reportNote').value=''; document.getElementById('reportName').value='';
+  document.getElementById('reportModal').classList.remove('hidden'); document.body.style.overflow='hidden';
+}
+function closeReportModal(){ document.getElementById('reportModal').classList.add('hidden'); document.body.style.overflow=''; }
+function copyReportUrl(){ navigator.clipboard.writeText(reportTargetUrl).then(()=>showToast('URL disalin!')).catch(()=>showToast('Gagal',true)); }
+function submitReport(){
+  const r=document.querySelector('input[name="reportReason"]:checked');
+  if(!r){showToast('Pilih alasan pelaporan terlebih dahulu',true);return;}
+  const params=new URLSearchParams({url:reportTargetUrl,categ:'phishing',comment:`[ImigrasiFinder] ${r.value}: ${document.getElementById('reportNote').value||'Situs mencurigakan'}`});
+  window.open(`https://aduankonten.id?${params}`, '_blank', 'noopener,noreferrer');
+  closeReportModal(); showToast('Membuka portal Komdigi...');
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeReportModal(); });
 
-        <!-- Action Buttons -->
-        <div class="flex flex-wrap gap-2">
-          <button onclick="copyUrl('${safeUrl}', this)"
-            class="inline-flex items-center gap-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-xl transition-all">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"/>
-            </svg>
-            Salin URL
-          </button>
-          ${isSuspicious ? `
-          <button onclick="openReportModal('${safeUrl}', ${site.score})"
-            class="inline-flex items-center gap-1.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl transition-all shadow-sm shadow-red-200 dark:shadow-red-900">
-            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            Laporkan ke Komdigi
-          </button>` : `
-          <span class="inline-flex items-center gap-1.5 text-xs font-medium bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800 px-3 py-2 rounded-xl">
-            ✅ Situs Aman
-          </span>`}
-        </div>
-      `;
+// ─── COPY URL ───
+function copyUrl(url, btn){
+  navigator.clipboard.writeText(url).then(()=>{
+    showToast('URL disalin!');
+    const orig=btn.innerHTML; btn.innerHTML='✓ Disalin';
+    btn.classList.add('bg-green-100','text-green-700');
+    setTimeout(()=>{ btn.innerHTML=orig; btn.classList.remove('bg-green-100','text-green-700'); },1500);
+  }).catch(()=>showToast('Gagal menyalin',true));
+}
 
-      setTimeout(() => {
-        const bar = card.querySelector('.risk-bar-fill');
-        if (bar) bar.style.width = bar.dataset.width;
-      }, 250 + idx * 70);
-
-      return card;
-    }
-
-    function buildChecklistItem(passed, label) {
-      if (passed) return `
-        <div class="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-400">
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg><span>${label}</span>
-        </div>`;
-      return `
-        <div class="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4.707-9.293a1 1 0 00-1.414-1.414L10 8.586 6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293z" clip-rule="evenodd"/>
-          </svg><span>${label}</span>
-        </div>`;
-    }
-
-    // ─────────────────────────────────────────────
-    // CHIP
-    // ─────────────────────────────────────────────
-    function setChip(kw) {
-      document.getElementById('searchInput').value = kw;
-      doSearch();
-    }
-
-    // ─────────────────────────────────────────────
-    // MANUAL URL CHECKER
-    // ─────────────────────────────────────────────
-    function toggleManualChecker() {
-      const p = document.getElementById('manualCheckerPanel');
-      p.classList.toggle('hidden');
-      if (!p.classList.contains('hidden')) document.getElementById('manualUrlInput').focus();
-    }
-
-    function clearManualUrl() {
-      document.getElementById('manualUrlInput').value = '';
-      const r = document.getElementById('manualResult');
-      r.innerHTML = '';
-      r.classList.add('hidden');
-    }
-
-    function analyzeManualUrl() {
-      const input = document.getElementById('manualUrlInput').value.trim();
-      const resultEl = document.getElementById('manualResult');
-      if (!input || input.length < 4) { resultEl.classList.add('hidden'); return; }
-      let url = input;
-      if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
-
-      const score     = calculateRiskScore(url);
-      const badge     = getBadge(score, url);
-      const risk      = getRiskLevel(score);
-      const checklist = buildChecklist(url);
-
-      const badgeCls = {
-        green: 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
-        amber: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-        red:   'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
-      };
-      const riskCls = {
-        green: 'text-green-600 dark:text-green-400',
-        amber: 'text-amber-600 dark:text-amber-400',
-        red:   'text-red-600 dark:text-red-400',
-      };
-
-      resultEl.classList.remove('hidden');
-      resultEl.innerHTML = `
-        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-3 space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border ${badgeCls[badge.color]}">${badge.emoji} ${badge.label}</span>
-            <span class="text-xl font-extrabold ${riskCls[risk.color]}">${score}<span class="text-xs font-medium"> / 100</span></span>
-          </div>
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-xs text-gray-500 dark:text-gray-400">Tingkat Risiko</span>
-              <span class="text-xs font-bold ${riskCls[risk.color]}">${risk.label}</span>
-            </div>
-            <div class="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-              <div class="h-full ${risk.barColor} rounded-full risk-bar-fill" style="width:0%" data-width="${score}%"></div>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-1">
-            ${buildChecklistItem(checklist.https,            'Menggunakan HTTPS')}
-            ${buildChecklistItem(checklist.govDomain,        'Domain resmi .go.id')}
-            ${buildChecklistItem(checklist.notFreeHosting,   'Bukan hosting gratis')}
-            ${buildChecklistItem(checklist.notAskingPayment, 'Tidak ada kata berbayar')}
-          </div>
-          ${score > 30 ? `
-          <button onclick="openReportModal('${url.replace(/'/g,"\\'")}', ${score})"
-            class="flex items-center justify-center gap-1.5 text-xs font-bold bg-red-600 hover:bg-red-700 text-white px-3 py-2.5 rounded-xl transition-all w-full">
-            ⚠️ Laporkan ke Komdigi
-          </button>` : ''}
-        </div>`;
-      setTimeout(() => {
-        const bar = resultEl.querySelector('.risk-bar-fill');
-        if (bar) bar.style.width = bar.dataset.width;
-      }, 100);
-    }
-
-    // ─────────────────────────────────────────────
-    // REPORT MODAL
-    // ─────────────────────────────────────────────
-    let reportTargetUrl = '';
-
-    function openReportModal(url, score) {
-      reportTargetUrl = url;
-      document.getElementById('reportUrlDisplay').textContent = url;
-      document.getElementById('reportScoreVal').textContent   = `Skor ${score} / 100 — ${getRiskLevel(score).label}`;
-      // Reset form
-      document.querySelectorAll('input[name="reportReason"]').forEach(r => r.checked = false);
-      document.getElementById('reportNote').value  = '';
-      document.getElementById('reportName').value  = '';
-      document.getElementById('reportModal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeReportModal() {
-      document.getElementById('reportModal').classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    function copyReportUrl() {
-      navigator.clipboard.writeText(reportTargetUrl).then(() => showToast('URL disalin!')).catch(() => showToast('Gagal menyalin', true));
-    }
-
-    function submitReport() {
-      const reason = document.querySelector('input[name="reportReason"]:checked');
-      if (!reason) {
-        showToast('Pilih alasan pelaporan terlebih dahulu', true);
-        return;
-      }
-      // Build aduankonten.id URL with prefilled info
-      const params = new URLSearchParams({
-        url: reportTargetUrl,
-        categ: 'phishing',
-        comment: `[ImigrasiFinder] ${reason.value}: ${document.getElementById('reportNote').value || 'Situs mencurigakan'}`,
-      });
-      const reportUrl = `https://aduankonten.id?${params.toString()}`;
-      window.open(reportUrl, '_blank', 'noopener,noreferrer');
-      closeReportModal();
-      showToast('Membuka portal Komdigi untuk laporan resmi...');
-    }
-
-    // ESC to close modal
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeReportModal(); });
-
-    // ─────────────────────────────────────────────
-    // COPY URL
-    // ─────────────────────────────────────────────
-    function copyUrl(url, btn) {
-      navigator.clipboard.writeText(url).then(() => {
-        showToast('URL disalin!');
-        const orig = btn.innerHTML;
-        btn.innerHTML = '✓ Disalin';
-        btn.classList.add('bg-green-100','text-green-700','dark:bg-green-900/30','dark:text-green-400');
-        setTimeout(() => {
-          btn.innerHTML = orig;
-          btn.classList.remove('bg-green-100','text-green-700','dark:bg-green-900/30','dark:text-green-400');
-        }, 1500);
-      }).catch(() => showToast('Gagal menyalin URL', true));
-    }
-
-    // ─────────────────────────────────────────────
-    // TOAST
-    // ─────────────────────────────────────────────
-    let toastTimer = null;
-    function showToast(msg, isError = false) {
-      const el   = document.getElementById('toast');
-      const msgEl= document.getElementById('toastMsg');
-      const icon = document.getElementById('toastIcon');
-      msgEl.textContent = msg;
-      icon.textContent  = isError ? '✗' : '✓';
-      icon.className    = isError ? 'text-red-400 flex-shrink-0' : 'text-green-400 flex-shrink-0';
-      el.classList.add('show');
-      if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
-    }
-  </script>
+// ─── TOAST ───
+let toastTimer=null;
+function showToast(msg, isError=false){
+  const el=document.getElementById('toast'), m=document.getElementById('toastMsg'), ic=document.getElementById('toastIcon');
+  m.textContent=msg; ic.textContent=isError?'✗':'✓'; ic.className=isError?'text-red-400 flex-shrink-0':'text-green-400 flex-shrink-0';
+  el.classList.add('show'); if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+</script>
 </body>
 </html>
